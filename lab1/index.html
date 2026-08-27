@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A D3.js bar chart showing eight student scores.">
+    <title>Lab 1 · Student Scores</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
+            <span class="brand-mark">401</span>
+            <span>Data Acquisition<br>and Visualization</span>
+        </a>
+        <span class="course-tag">Lab 01 / 10</span>
+    </header>
+
+    <main>
+        <section class="lab-intro">
+            <p class="eyebrow">Lab 1 · Getting Started with D3.js</p>
+            <h1>Student Scores</h1>
+            <p class="lead">
+                An SVG bar chart created with D3 data binding. Each bar's height
+                represents a score loaded from an external CSV file.
+            </p>
+        </section>
+
+        <section class="chart-card" aria-labelledby="visualization-title">
+            <div class="chart-header">
+                <div>
+                    <h2 id="visualization-title">Class performance</h2>
+                </div>
+            </div>
+            <div id="chart" aria-live="polite">
+                <p class="loading">Loading student scores…</p>
+            </div>
+        </section>
+
+        <p><a class="back-link" href="../index.html"><span aria-hidden="true">←</span> Back to all labs</a></p>
+    </main>
+
+    <footer>
+        <p>STATS 401 · Lab 1</p>
+        <p>External data · D3 data binding · SVG</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="../js/lab1.js"></script>
+</body>
+</html>
