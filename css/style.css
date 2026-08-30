@@ -369,6 +369,183 @@ footer p {
     color: #a43c25;
 }
 
+/* Lab 2 */
+.chart-card--multivariate {
+    margin-bottom: 52px;
+}
+
+#city-chart {
+    width: 100%;
+    min-height: 620px;
+    overflow-x: auto;
+    background: var(--card);
+}
+
+#city-chart svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+}
+
+.chart-axis {
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 11px;
+}
+
+.chart-axis .domain {
+    stroke: var(--line);
+}
+
+.chart-grid .tick line {
+    stroke: var(--line);
+    stroke-dasharray: 2 5;
+}
+
+.city-axis .domain {
+    display: none;
+}
+
+.city-axis text {
+    fill: var(--ink);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.panel-title {
+    fill: var(--ink);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.panel-subtitle,
+.population-label {
+    fill: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.panel-divider {
+    stroke: var(--line);
+    stroke-width: 1px;
+}
+
+.city-plot-background {
+    fill: var(--card);
+}
+
+.city-row {
+    outline: none;
+}
+
+.row-hit-target {
+    fill: none;
+    pointer-events: stroke;
+}
+
+.row-guide {
+    stroke: rgba(96, 113, 110, 0.18);
+    stroke-width: 1px;
+    pointer-events: none;
+}
+
+.city-row:hover .row-guide,
+.city-row:focus .row-guide {
+    stroke: var(--teal);
+    stroke-width: 2px;
+}
+
+.population-bar {
+    opacity: 0.82;
+    transition: opacity 160ms ease;
+}
+
+.temperature-track {
+    stroke: rgba(96, 113, 110, 0.28);
+    stroke-width: 1px;
+}
+
+.temperature-dot {
+    stroke: var(--card);
+    stroke-width: 3px;
+    transition: stroke-width 160ms ease;
+}
+
+.city-row:hover .population-bar,
+.city-row:focus .population-bar {
+    opacity: 1;
+}
+
+.city-row:hover .temperature-dot,
+.city-row:focus .temperature-dot {
+    stroke: var(--ink);
+    stroke-width: 3px;
+}
+
+.temperature-label {
+    fill: var(--ink);
+    font-size: 11px;
+    font-weight: 800;
+    pointer-events: none;
+}
+
+.city-legend {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.legend-title {
+    fill: var(--ink);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.tooltip {
+    position: fixed;
+    z-index: 10;
+    display: grid;
+    gap: 2px;
+    min-width: 190px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+    background: var(--card);
+    box-shadow: var(--shadow);
+    font-size: 13px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 120ms ease;
+}
+
+.tooltip strong {
+    margin-bottom: 3px;
+    color: var(--teal-dark);
+    font-size: 15px;
+}
+
+.design-justification {
+    max-width: 820px;
+    margin: 0 0 72px;
+    padding: 42px 0 0;
+    border-top: 1px solid var(--line);
+}
+
+.design-justification h2 {
+    margin-bottom: 24px;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.design-justification > p:last-child {
+    color: var(--muted);
+    font-size: 1.04rem;
+}
+
 /* Placeholder pages */
 .placeholder {
     min-height: calc(100vh - 220px);
@@ -423,6 +600,14 @@ footer p {
 
     #chart svg {
         min-width: 720px;
+    }
+
+    #city-chart {
+        min-height: 520px;
+    }
+
+    #city-chart svg {
+        min-width: 1040px;
     }
 }
 

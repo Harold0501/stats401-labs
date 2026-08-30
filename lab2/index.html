@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 2 · STATS 401</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta
+        name="description"
+        content="A four-dimensional D3 visualization comparing population, temperature, development level, and region across twelve cities."
+    >
+    <title>Lab 2 · Multivariate Cities</title>
+    <link rel="stylesheet" href="../css/style.css?v=3">
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="../index.html">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
             <span class="brand-mark">401</span>
             <span>Data Acquisition<br>and Visualization</span>
         </a>
@@ -16,14 +20,61 @@
     </header>
 
     <main>
-        <section class="placeholder">
-            <p class="eyebrow">Lab 2</p>
-            <h1>Coming soon.</h1>
-            <p class="lead">This lab will be added as the course progresses.</p>
+        <section class="lab-intro">
+            <p class="eyebrow">Lab 2 · Multivariate Visualization with D3</p>
+            <h1>City profiles</h1>
+            <p class="lead">
+                A paired bar-and-dot display compares population, temperature,
+                development level, and region for twelve cities.
+            </p>
+        </section>
+
+        <section class="chart-card chart-card--multivariate" aria-labelledby="visualization-title">
+            <div class="chart-header">
+                <div>
+                    <h2 id="visualization-title">Population and climate</h2>
+                </div>
+            </div>
+
+            <div id="city-chart" aria-live="polite">
+                <p class="loading">Loading city data…</p>
+            </div>
+            <div id="tooltip" class="tooltip" role="status"></div>
+        </section>
+
+        <section class="design-justification" aria-labelledby="design-justification-title">
+            <h2 id="design-justification-title">Design Justification</h2>
+            <p>
+                This visualization uses two aligned views so the four variables remain
+                readable without relying on a conventional scatterplot. Population, a
+                ratio variable, is mapped to horizontal bar length because the shared
+                zero baseline makes city magnitudes easy to compare. Temperature, an
+                interval variable, is mapped to the horizontal position of a dot on a
+                separate Celsius scale. Region, a nominal variable, is encoded with
+                distinct colors that group cities without implying order. Development
+                level, an ordinal variable, controls dot size with Low, Medium, and High
+                produce progressively larger circles. Each row shares one city label,
+                allowing viewers to connect its population bar and temperature marker.
+                The paired layout should make broad patterns visible, for example,
+                whether larger cities tend to be cooler, and how development levels
+                and regions are distributed, while the tooltip provides exact values
+                for closer inspection.
+            </p>
+        </section>
+
+        <p>
             <a class="back-link" href="../index.html">
                 <span aria-hidden="true">←</span> Back to all labs
             </a>
-        </section>
+        </p>
     </main>
+
+    <footer>
+        <p>STATS 401 · Lab 2</p>
+        <p>Ratio · Interval · Ordinal · Nominal</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="lab2.js?v=3"></script>
 </body>
 </html>
