@@ -3,15 +3,20 @@ const tableBody = table.select("tbody");
 const statusMessage = d3.select("#table-status");
 
 const labels = {
-    work_id: "Work ID",
+    book_id: "Book ID",
     title: "Title",
-    authors: "Author(s)",
-    first_publish_year: "First published",
-    edition_count: "Editions",
-    languages: "Languages"
+    category: "Category",
+    price_gbp: "Price (£)",
+    rating: "Rating",
+    available_quantity: "Available quantity"
 };
 
-const numericColumns = new Set(["first_publish_year", "edition_count"]);
+const numericColumns = new Set([
+    "book_id",
+    "price_gbp",
+    "rating",
+    "available_quantity"
+]);
 const collator = new Intl.Collator(undefined, {
     numeric: true,
     sensitivity: "base"
@@ -61,7 +66,7 @@ function renderRows() {
 
     const rows = tableBody
         .selectAll("tr")
-        .data(visibleRows, row => row.work_id)
+        .data(visibleRows, row => row.book_id)
         .join("tr");
 
     rows.selectAll("td")
@@ -74,15 +79,16 @@ function renderRows() {
         .classed("numeric-cell", cell => numericColumns.has(cell.column))
         .text(cell => cell.value || "—");
 
+    statusMessage.text(`Showing ${allRows.length.toLocaleString()} records`);
     updateHeaderState();
 }
 
 d3.csv("../data/lab3_data.csv", row => ({
     ...row,
-    edition_count: row.edition_count === "" ? "" : Number(row.edition_count),
-    first_publish_year: row.first_publish_year === ""
-        ? ""
-        : Number(row.first_publish_year)
+    book_id: Number(row.book_id),
+    price_gbp: Number(row.price_gbp),
+    rating: Number(row.rating),
+    available_quantity: Number(row.available_quantity)
 }))
     .then(data => {
         allRows = data;

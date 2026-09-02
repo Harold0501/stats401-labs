@@ -1,161 +1,229 @@
-"""Acquire 1,000 public book-work records from the Open Library Search API."""
+"""Scrape all 1,000 book listings from the Books to Scrape sandbox."""
 
 from __future__ import annotations
 
 import csv
+import re
 import time
 from pathlib import Path
-from typing import Any
+from urllib.parse import urljoin
 
 import requests
+from bs4 import BeautifulSoup
 
 
-API_URL = "https://openlibrary.org/search.json"
+BASE_URL = "https://books.toscrape.com/"
+START_URL = urljoin(BASE_URL, "catalogue/page-1.html")
 OUTPUT_PATH = Path(__file__).resolve().parents[1] / "data" / "lab3_data.csv"
+CHECKPOINT_PATH = OUTPUT_PATH.with_name("lab3_progress.csv")
 TARGET_RECORDS = 1_000
-PAGE_SIZE = 100
-REQUEST_DELAY_SECONDS = 1.1
-MAX_RETRIES = 3
-MAX_PAGES = 25
-USER_AGENT = "STATS401-Lab3-Educational-Project/1.0"
-FIELDS = (
-    "key,title,author_name,first_publish_year,edition_count,language"
-)
+REQUEST_DELAY_SECONDS = 1.0
+RETRY_BACKOFF_SECONDS = 5.0
+MAX_RETRIES = 5
+USER_AGENT = "STATS401-Lab3-Educational-Scraper/1.0"
 CSV_COLUMNS = (
-    "work_id",
+    "book_id",
     "title",
-    "authors",
-    "first_publish_year",
-    "edition_count",
-    "languages",
+    "category",
+    "price_gbp",
+    "rating",
+    "available_quantity",
 )
+RATING_VALUES = {
+    "One": 1,
+    "Two": 2,
+    "Three": 3,
+    "Four": 4,
+    "Five": 5,
+}
 
 
-def join_values(value: Any) -> str:
-    """Turn an API list field into a compact, readable CSV value."""
-    if not value:
-        return ""
-    if isinstance(value, list):
-        return "; ".join(
-            str(item).strip() for item in value if str(item).strip()
-        )
-    return str(value).strip()
+def request_page(session: requests.Session, url: str) -> requests.Response:
+    """Download one catalogue page, retrying temporary request failures."""
+    for attempt in range(1, MAX_RETRIES + 1):
+        time.sleep(REQUEST_DELAY_SECONDS)
+        try:
+            response = session.get(url, timeout=30)
+            response.raise_for_status()
+            response.encoding = "utf-8"
+            return response
+        except requests.RequestException as error:
+            print(
+                f"Request failed (attempt {attempt}/{MAX_RETRIES}): {error}"
+            )
+            if attempt < MAX_RETRIES:
+                time.sleep(RETRY_BACKOFF_SECONDS * attempt)
+
+    raise RuntimeError(f"Could not download {url} after {MAX_RETRIES} attempts.")
 
 
-def normalize_book(book: dict[str, Any]) -> dict[str, Any] | None:
-    """Select and normalize the fields displayed by the Lab 3 webpage."""
-    work_key = str(book.get("key", "")).strip()
-    title = str(book.get("title", "")).strip()
-    authors = join_values(book.get("author_name"))
-    languages = join_values(book.get("language"))
+def parse_listing(book: object) -> dict[str, object] | None:
+    """Extract the fields available on a catalogue product card."""
+    title_link = book.select_one("h3 a")
+    price_node = book.select_one(".price_color")
+    rating_node = book.select_one(".star-rating")
+
+    if not all((title_link, price_node, rating_node)):
+        return None
+
+    href = str(title_link.get("href", ""))
+    id_match = re.search(r"_(\d+)/index\.html$", href)
+    rating_class = next(
+        (name for name in RATING_VALUES if name in rating_node.get("class", [])),
+        None,
+    )
 
     try:
-        first_publish_year = int(book["first_publish_year"])
-        edition_count = int(book["edition_count"])
+        book_id = int(id_match.group(1)) if id_match else 0
+        price_gbp = float(price_node.get_text(strip=True).replace("£", ""))
+        rating = RATING_VALUES[rating_class] if rating_class else 0
     except (KeyError, TypeError, ValueError):
         return None
 
-    if not all((work_key, title, authors, languages)):
-        return None
-    if first_publish_year <= 0 or edition_count <= 0:
+    title = str(title_link.get("title", "")).strip()
+    if not all((book_id, title, price_gbp, rating, href)):
         return None
 
     return {
-        "work_id": work_key.removeprefix("/works/"),
+        "book_id": book_id,
         "title": title,
-        "authors": authors,
-        "first_publish_year": first_publish_year,
-        "edition_count": edition_count,
-        "languages": languages,
+        "price_gbp": price_gbp,
+        "rating": rating,
+        "detail_path": href,
     }
 
 
-def request_page(
-    session: requests.Session, page: int
-) -> list[dict[str, Any]]:
-    """Request one results page, retrying temporary request failures."""
-    params = {
-        "q": "subject_key:fiction language:eng",
-        "fields": FIELDS,
-        "sort": "key",
-        "page": page,
-        "limit": PAGE_SIZE,
-    }
+def parse_detail(soup: BeautifulSoup) -> tuple[str, int] | None:
+    """Extract category and numeric stock from one book detail page."""
+    category_node = soup.select_one("ul.breadcrumb li:nth-of-type(3) a")
+    availability_node = soup.select_one(".product_main .availability")
 
-    for attempt in range(1, MAX_RETRIES + 1):
-        try:
-            response = session.get(API_URL, params=params, timeout=30)
-            response.raise_for_status()
-            payload = response.json()
-            documents = payload.get("docs")
+    if category_node is None or availability_node is None:
+        return None
 
-            if not isinstance(documents, list):
-                raise ValueError("The API response did not contain a docs list.")
+    category = category_node.get_text(strip=True)
+    availability_text = " ".join(availability_node.stripped_strings)
+    quantity_match = re.search(r"\((\d+)\s+available\)", availability_text)
 
-            return documents
-        except (requests.RequestException, ValueError) as error:
-            print(
-                f"Page {page} failed (attempt {attempt}/{MAX_RETRIES}): "
-                f"{error}"
-            )
-            if attempt < MAX_RETRIES:
-                time.sleep(REQUEST_DELAY_SECONDS * attempt)
+    if not category or quantity_match is None:
+        return None
 
-    return []
+    return category, int(quantity_match.group(1))
 
 
-def acquire_books() -> list[dict[str, Any]]:
-    """Collect unique records with automatic pagination and rate limiting."""
-    records_by_id: dict[str, dict[str, Any]] = {}
+def load_checkpoint() -> dict[int, dict[str, object]]:
+    """Load complete records saved by an earlier interrupted run."""
+    if not CHECKPOINT_PATH.exists():
+        return {}
+
+    records: dict[int, dict[str, object]] = {}
+    with CHECKPOINT_PATH.open(encoding="utf-8-sig", newline="") as csv_file:
+        for row in csv.DictReader(csv_file):
+            try:
+                book_id = int(row["book_id"])
+                record: dict[str, object] = {
+                    "book_id": book_id,
+                    "title": row["title"],
+                    "category": row["category"],
+                    "price_gbp": f"{float(row['price_gbp']):.2f}",
+                    "rating": int(row["rating"]),
+                    "available_quantity": int(row["available_quantity"]),
+                }
+            except (KeyError, TypeError, ValueError):
+                continue
+
+            if all(str(value).strip() for value in record.values()):
+                records[book_id] = record
+
+    print(f"Resuming with {len(records):,} records from the checkpoint")
+    return records
+
+
+def write_csv(path: Path, records: list[dict[str, object]]) -> None:
+    """Write complete records to a UTF-8 CSV file."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8-sig", newline="") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=CSV_COLUMNS)
+        writer.writeheader()
+        writer.writerows(records)
+
+
+def scrape_books() -> list[dict[str, object]]:
+    """Follow catalogue pagination until 1,000 unique records are collected."""
+    records_by_id = load_checkpoint()
+    next_url: str | None = START_URL
+    page = 1
 
     with requests.Session() as session:
         session.headers.update({"User-Agent": USER_AGENT})
 
-        for page in range(1, MAX_PAGES + 1):
-            documents = request_page(session, page)
-            if not documents:
-                print(f"No usable response for page {page}; moving on.")
-                time.sleep(REQUEST_DELAY_SECONDS)
-                continue
+        while next_url and len(records_by_id) < TARGET_RECORDS:
+            response = request_page(session, next_url)
+            soup = BeautifulSoup(response.text, "html.parser")
+            book_cards = soup.select("article.product_pod")
 
-            for document in documents:
-                record = normalize_book(document)
-                if record is not None:
-                    records_by_id[record["work_id"]] = record
+            if not book_cards:
+                raise RuntimeError(f"No book records were found on page {page}.")
 
-                if len(records_by_id) >= TARGET_RECORDS:
-                    break
+            for book_card in book_cards:
+                listing = parse_listing(book_card)
+                if listing is None:
+                    continue
 
-            print(
-                f"Page {page}: collected {len(records_by_id):,} unique records"
+                book_id = int(listing["book_id"])
+                if book_id in records_by_id:
+                    continue
+
+                detail_url = urljoin(response.url, str(listing.pop("detail_path")))
+                detail_response = request_page(session, detail_url)
+                detail_soup = BeautifulSoup(detail_response.text, "html.parser")
+                detail = parse_detail(detail_soup)
+                if detail is None:
+                    raise RuntimeError(
+                        f"Required detail fields were missing from {detail_url}."
+                    )
+
+                category, available_quantity = detail
+                record = {
+                    "book_id": listing["book_id"],
+                    "title": listing["title"],
+                    "category": category,
+                    "price_gbp": f"{float(listing['price_gbp']):.2f}",
+                    "rating": listing["rating"],
+                    "available_quantity": available_quantity,
+                }
+                records_by_id[book_id] = record
+
+            print(f"Page {page}: collected {len(records_by_id):,} unique records")
+            write_csv(CHECKPOINT_PATH, list(records_by_id.values()))
+
+            next_link = soup.select_one("li.next a")
+            next_url = (
+                urljoin(response.url, str(next_link["href"]))
+                if next_link is not None
+                else None
             )
-
-            if len(records_by_id) >= TARGET_RECORDS:
-                break
-
-            time.sleep(REQUEST_DELAY_SECONDS)
+            page += 1
 
     records = list(records_by_id.values())[:TARGET_RECORDS]
     if len(records) < TARGET_RECORDS:
         raise RuntimeError(
-            f"Only {len(records):,} records were collected; "
+            f"Only {len(records):,} complete records were collected; "
             f"at least {TARGET_RECORDS:,} are required."
         )
 
     return records
 
 
-def save_csv(records: list[dict[str, Any]]) -> None:
-    """Write the normalized records to the repository's data directory."""
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with OUTPUT_PATH.open("w", encoding="utf-8-sig", newline="") as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=CSV_COLUMNS)
-        writer.writeheader()
-        writer.writerows(records)
+def save_csv(records: list[dict[str, object]]) -> None:
+    """Write the scraped records to the repository's data directory."""
+    write_csv(OUTPUT_PATH, records)
+    if CHECKPOINT_PATH.exists():
+        CHECKPOINT_PATH.unlink()
 
 
 def main() -> None:
-    records = acquire_books()
+    records = scrape_books()
     save_csv(records)
     print(f"Saved {len(records):,} records to {OUTPUT_PATH}")
 

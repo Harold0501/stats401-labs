@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A sortable table of 1,000 fiction book records acquired from the Open Library Search API.">
+    <meta name="description" content="A sortable table of 1,000 book listings scraped from the Books to Scrape sandbox.">
     <title>Lab 3 · Web Data Acquisition</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
@@ -19,29 +19,29 @@
     <main>
         <section class="lab-intro lab3-intro">
             <p class="eyebrow">Lab 3 · Web Data Acquisition</p>
-            <h1>Records of fiction works.</h1>
+            <h1>One thousand book listings.</h1>
             <p class="lead">
-                This dataset contains fiction works and their
-                bibliographic metadata, acquired programmatically from the
-                Open Library Search API.
+                This dataset contains the complete Books to Scrape catalogue,
+                including category, price, rating, and available quantity,
+                acquired programmatically from its HTML pages.
             </p>
 
             <dl class="dataset-facts">
                 <div>
                     <dt>Dataset:</dt>
-                    <dd>Fiction works</dd>
+                    <dd>Book catalogue listings</dd>
                 </div>
                 <div>
                     <dt>Source:</dt>
-                    <dd><a href="https://openlibrary.org/developers/api">Open Library</a></dd>
+                    <dd><a href="https://books.toscrape.com/">Books to Scrape</a></dd>
                 </div>
                 <div>
                     <dt>Methods:</dt>
-                    <dd>REST API with Python requests</dd>
+                    <dd>HTML scraping with Python requests + BeautifulSoup</dd>
                 </div>
                 <div>
                     <dt>Records:</dt>
-                    <dd>1,000 unique works</dd>
+                    <dd>1,000 unique book listings</dd>
                 </div>
             </dl>
         </section>
@@ -57,7 +57,7 @@
             <div class="table-scroll" tabindex="0" aria-label="Scrollable book records table">
                 <table id="data-table">
                     <caption class="visually-hidden">
-                        One thousand fiction works acquired from the Open Library Search API
+                        One thousand book listings scraped from Books to Scrape
                     </caption>
                     <thead></thead>
                     <tbody></tbody>
