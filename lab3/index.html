@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 3 · STATS 401</title>
+    <meta name="description" content="A sortable table of 1,000 fiction book records acquired from the Open Library Search API.">
+    <title>Lab 3 · Web Data Acquisition</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="../index.html">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
             <span class="brand-mark">401</span>
             <span>Data Acquisition<br>and Visualization</span>
         </a>
@@ -16,14 +17,64 @@
     </header>
 
     <main>
-        <section class="placeholder">
-            <p class="eyebrow">Lab 3</p>
-            <h1>Coming soon.</h1>
-            <p class="lead">This lab will be added as the course progresses.</p>
-            <a class="back-link" href="../index.html">
-                <span aria-hidden="true">←</span> Back to all labs
-            </a>
+        <section class="lab-intro lab3-intro">
+            <p class="eyebrow">Lab 3 · Web Data Acquisition</p>
+            <h1>Records of fiction works.</h1>
+            <p class="lead">
+                This dataset contains fiction works and their
+                bibliographic metadata, acquired programmatically from the
+                Open Library Search API.
+            </p>
+
+            <dl class="dataset-facts">
+                <div>
+                    <dt>Dataset:</dt>
+                    <dd>Fiction works</dd>
+                </div>
+                <div>
+                    <dt>Source:</dt>
+                    <dd><a href="https://openlibrary.org/developers/api">Open Library</a></dd>
+                </div>
+                <div>
+                    <dt>Methods:</dt>
+                    <dd>REST API with Python requests</dd>
+                </div>
+                <div>
+                    <dt>Records:</dt>
+                    <dd>1,000 unique works</dd>
+                </div>
+            </dl>
         </section>
+
+        <section class="data-table-card" aria-labelledby="table-heading">
+            <div class="table-card-header">
+                <div>
+                    <p class="eyebrow">Acquired data</p>
+                    <h2 id="table-heading">Book records</h2>
+                </div>
+            </div>
+
+            <div class="table-scroll" tabindex="0" aria-label="Scrollable book records table">
+                <table id="data-table">
+                    <caption class="visually-hidden">
+                        One thousand fiction works acquired from the Open Library Search API
+                    </caption>
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <a class="back-link lab3-back-link" href="../index.html">
+            <span aria-hidden="true">←</span> Back to all labs
+        </a>
     </main>
+
+    <footer>
+        <p>STATS 401 · Data Acquisition and Visualization</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="lab3.js"></script>
 </body>
 </html>
