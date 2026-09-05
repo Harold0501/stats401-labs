@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 4 · STATS 401</title>
+    <meta name="description" content="A D3 analysis of RoBERTa-estimated sentiment across 19 topics in 1,199 cleaned tweets.">
+    <title>Lab 4 · Cleaning Web Data for Visualization</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="../index.html">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
             <span class="brand-mark">401</span>
             <span>Data Acquisition<br>and Visualization</span>
         </a>
@@ -16,14 +17,106 @@
     </header>
 
     <main>
-        <section class="placeholder">
-            <p class="eyebrow">Lab 4</p>
-            <h1>Coming soon.</h1>
-            <p class="lead">This lab will be added as the course progresses.</p>
-            <a class="back-link" href="../index.html">
-                <span aria-hidden="true">←</span> Back to all labs
-            </a>
+        <section class="lab-intro lab4-intro">
+            <p class="eyebrow">Lab 4 · Cleaning Web Data for Visualization</p>
+            <h1>What do people <span>feel</span> across topics?</h1>
+            <p class="lead">
+                A topic-by-topic view of model-estimated sentiment in a cleaned
+                sample of the TweetTopic corpus.
+            </p>
+
+            <dl class="dataset-facts">
+                <div>
+                    <dt>Dataset:</dt>
+                    <dd><a href="https://huggingface.co/datasets/cardiffnlp/tweet_topic_multi">Cardiff NLP TweetTopic</a></dd>
+                </div>
+                <div>
+                    <dt>Records:</dt>
+                    <dd>1,199 cleaned tweets · 19 topics</dd>
+                </div>
+                <div>
+                    <dt>Period:</dt>
+                    <dd>September 2019-August 2021</dd>
+                </div>
+                <div>
+                    <dt>Model:</dt>
+                    <dd><a href="https://huggingface.co/cardiffnlp/twitter-roberta-base-sentiment-latest">Twitter-RoBERTa sentiment</a></dd>
+                </div>
+            </dl>
         </section>
+
+        <section class="chart-card lab4-chart-card" aria-labelledby="sentiment-heading">
+            <div class="chart-header lab4-chart-header">
+                <div>
+                    <h2 id="sentiment-heading">Sentiment mix by tweet topic</h2>
+                </div>
+                <label class="sort-control" for="topic-sort">
+                    <span>Sort topics</span>
+                    <select id="topic-sort">
+                        <option value="score">Average sentiment</option>
+                        <option value="count">Tweet count</option>
+                        <option value="topic">Alphabetical</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="sentiment-legend" aria-label="Sentiment legend">
+                <span><i class="legend-swatch legend-swatch--negative"></i>Negative</span>
+                <span><i class="legend-swatch legend-swatch--neutral"></i>Neutral</span>
+                <span><i class="legend-swatch legend-swatch--positive"></i>Positive</span>
+            </div>
+
+            <div id="topic-chart">
+                <p class="loading">Loading sentiment data…</p>
+            </div>
+            <p id="sentiment-description" class="chart-caption">
+                Topics are multi-label: one tweet can contribute to more than one bar.
+                The score is P(positive) - P(negative), from -1 to +1.
+            </p>
+            <div id="topic-tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
+        </section>
+
+        <section class="design-justification lab4-analysis" aria-labelledby="analysis-heading">
+            <h2 id="analysis-heading">Result Analysis</h2>
+            <p>
+                I used a 1,200-row sample from Cardiff NLP's
+                TweetTopic training split, a corpus of English tweets posted
+                between September 2019 and August 2021 and manually assigned to
+                one or more of 19 topics. The source already masks most account
+                names and URLs.
+            </p>
+            <p>
+                My quality audit found no missing text,
+                duplicate IDs, or invalid dates. I removed one record with no
+                topic, collapsed whitespace, parsed dates, and standardized the
+                multi-label topic strings. I also created a pruned TF-IDF matrix
+                for text inspection. Sentiment comes from the lab's
+                Twitter-RoBERTa model. Its positive, neutral, and negative
+                probabilities determine the class, while the continuous score
+                is P(positive) minus P(negative). These are model estimates, not
+                ground-truth labels.
+            </p>
+            <p>
+                The chart compares each topic's sentiment
+                composition and sorts by mean score by default. Family is the
+                most positive topic (+0.71; 38 of 46 tweets classified positive),
+                followed by food and dining (+0.64). News and social concern is
+                closest to neutral overall (+0.06) and has the largest negative
+                share among the high-volume topics: 86 of 331 tweets. Smaller
+                topic groups should be interpreted cautiously.
+            </p>
+        </section>
+
+        <a class="back-link lab4-back-link" href="../index.html">
+            <span aria-hidden="true">←</span> Back to all labs
+        </a>
     </main>
+
+    <footer>
+        <p>STATS 401 · Data Acquisition and Visualization</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="lab4.js"></script>
 </body>
 </html>
