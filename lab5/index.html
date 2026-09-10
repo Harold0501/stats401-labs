@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 5 · STATS 401</title>
+    <meta name="description" content="An interactive node-link diagram and adjacency matrix of a synthetic 50-station urban transit network.">
+    <title>Lab 5 · Interactive Network Visualization</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="../index.html">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
             <span class="brand-mark">401</span>
             <span>Data Acquisition<br>and Visualization</span>
         </a>
@@ -16,14 +17,151 @@
     </header>
 
     <main>
-        <section class="placeholder">
-            <p class="eyebrow">Lab 5</p>
-            <h1>Coming soon.</h1>
-            <p class="lead">This lab will be added as the course progresses.</p>
-            <a class="back-link" href="../index.html">
-                <span aria-hidden="true">←</span> Back to all labs
-            </a>
+        <section class="lab-intro lab5-intro">
+            <p class="eyebrow">Lab 5 · Interactive Network Visualization</p>
+            <h1>The urban transit network.</span></h1>
+            <p class="lead">
+                Two views of the same synthetic transit system reveal station roles,
+                passenger demand, route structure, and direct travel times.
+            </p>
+
+            <dl class="dataset-facts">
+                <div><dt>Network:</dt><dd>Synthetic urban transit system</dd></div>
+                <div><dt>Nodes:</dt><dd>50 stations across 5 districts</dd></div>
+                <div><dt>Links:</dt><dd>50 undirected direct connections</dd></div>
+                <div><dt>Views:</dt><dd>Node-link diagram + adjacency matrix</dd></div>
+            </dl>
         </section>
+
+        <section class="chart-card network-card" aria-labelledby="network-heading">
+            <div class="chart-header lab5-chart-header">
+                <div>
+                    <h2 id="network-heading">Node-Link Visualization</h2>
+                </div>
+                <button id="reset-network" class="network-reset" type="button">Reset layout</button>
+            </div>
+
+            <div class="encoding-legend" aria-label="Node-link encoding legend">
+                <div class="legend-section">
+                    <strong>Station district</strong>
+                    <div id="district-legend" class="legend-items"></div>
+                </div>
+                <div class="legend-section">
+                    <strong>Station type</strong>
+                    <div id="station-type-legend" class="legend-items"></div>
+                </div>
+                <div class="legend-section">
+                    <strong>Route type</strong>
+                    <div id="route-legend" class="legend-items"></div>
+                </div>
+                <p class="legend-note">
+                    Node area = daily passengers<br>
+                    Link width = travel time
+                </p>
+            </div>
+
+            <div id="network-chart" class="network-visualization">
+                <p class="loading">Loading transit network…</p>
+            </div>
+        </section>
+
+        <section class="design-justification lab5-design" aria-labelledby="node-design-heading">
+            <h2 id="node-design-heading">Node-Link Design Description</h2>
+            <p>
+                District uses color for quick geographic grouping. Node area represents daily passengers, while circle,
+                diamond, and square distinguish local, transfer, and terminal roles without competing for color. Route
+                color and line pattern separate Metro, Express, and Shuttle service; thicker links mean longer travel time.
+                Hovering isolates a station's neighbors, tooltips report exact attributes and degree, and dragging helps
+                untangle crowded areas.
+            </p>
+        </section>
+
+        <section class="chart-card matrix-card" aria-labelledby="matrix-heading">
+            <div class="chart-header lab5-chart-header">
+                <div>
+                    <h2 id="matrix-heading">Adjacency matrix</h2>
+                </div>
+            </div>
+
+            <div class="encoding-legend matrix-encoding-legend" aria-label="Adjacency matrix encoding legend">
+                <div class="legend-section">
+                    <strong>Station district · label color</strong>
+                    <div id="matrix-district-legend" class="legend-items"></div>
+                </div>
+                <div class="legend-section">
+                    <strong>Station type · label shape</strong>
+                    <div id="matrix-station-type-legend" class="legend-items"></div>
+                </div>
+                <div class="legend-section">
+                    <strong>Route type · cell color</strong>
+                    <div id="matrix-route-legend" class="legend-items"></div>
+                </div>
+                <div class="legend-section">
+                    <strong>Travel time · cell opacity</strong>
+                    <div class="opacity-legend" aria-label="Cell opacity ranges from 2 to 16 minutes">
+                        <span>2 min</span>
+                        <i class="opacity-ramp" aria-hidden="true"></i>
+                        <span>16 min</span>
+                    </div>
+                </div>
+            </div>
+            <div id="matrix-chart" class="matrix-visualization">
+                <p class="loading">Loading adjacency matrix…</p>
+            </div>
+        </section>
+
+        <section class="design-justification lab5-design" aria-labelledby="matrix-design-heading">
+            <h2 id="matrix-design-heading">Matrix Design Description</h2>
+            <p>
+                A filled cell marks a direct route. Color preserves route type and darker opacity means longer travel.
+                Colored labels retain district, and their shape markers retain station type. Ordering by station number
+                exposes the near-diagonal chain from Station 1 through Station 41. Cells farther from the diagonal reveal
+                shortcut routes. This order makes the network's generated sequence clear, while district comparisons become less direct.
+            </p>
+        </section>
+
+        <section class="findings" aria-labelledby="findings-heading">
+            <h2 id="findings-heading">Network questions and findings</h2>
+            <div class="findings-grid">
+                <article>
+                    <h3>Which stations appear central?</h3>
+                    <p>This question can be answered well by both of the visualizations. Hover highlighting reveals fourteen stations with the maximum degree of three: 4, 7, 10, 13, 16, 18, 21, 23, 25, 29, 31, 33, 34, and 38. No dominant hub exists.</p>
+                </article>
+                <article>
+                    <h3>Which districts are strongly connected?</h3>
+                    <p>This question is partially answered by both visualizations. Label colors show that most routes cross districts. East-South appears most often, followed by Central-North and East-West. Numeric ordering makes exact district comparison less immediate.</p>
+                </article>
+                <article>
+                    <h3>Where are transfer and terminal stations?</h3>
+                    <p>This question is well answered by both visualizations. Shape markers place both roles across the topology. Terminals 4, 7, 10, 13, 16, 25, 31, and 34 are degree-three junctions, while terminals 43, 46, and 49 are isolated.</p>
+                </article>
+                <article>
+                    <h3>Which stations carry high volume?</h3>
+                    <p>This question is well answered by the node-link visualization. Node area identifies stations 50, 49, 48, 47, and 46 as highest-volume. Their peripheral or isolated positions show that volume does not imply degree.</p>
+                </article>
+                <article>
+                    <h3>Where are the longest direct trips?</h3>
+                    <p>This question is well answered by both visualizations. The thickest link and darkest cells connect North 7 to Central 31 in 16 minutes, followed by South 18-East 34 in 15 minutes and East 29-West 50 in 14 minutes.</p>
+                </article>
+                <article>
+                    <h3>Are route types concentrated?</h3>
+                    <p>This question is partially answered by the matrix visualization. Matrix colors are interleaved, so concentration is modest. Express peaks on East-West and Shuttle on South-East with 4 each, while Metro is broadly dispersed.</p>
+                </article>
+            </div>
+        </section>
+
+        <a class="back-link lab5-back-link" href="../index.html">
+            <span aria-hidden="true">←</span> Back to all labs
+        </a>
     </main>
+
+    <div id="network-tooltip" class="tooltip network-tooltip" role="tooltip" aria-hidden="true"></div>
+
+    <footer>
+        <p>STATS 401 · Data Acquisition and Visualization</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="lab5.js"></script>
 </body>
 </html>
