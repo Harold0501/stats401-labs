@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 6 · STATS 401</title>
+    <meta name="description" content="Two interactive treemaps compare national GDP using different hierarchical segmentation methods.">
+    <title>Lab 6 · Hierarchical GDP Treemaps</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="../index.html">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
             <span class="brand-mark">401</span>
             <span>Data Acquisition<br>and Visualization</span>
         </a>
@@ -16,14 +17,81 @@
     </header>
 
     <main>
-        <section class="placeholder">
-            <p class="eyebrow">Lab 6</p>
-            <h1>Coming soon.</h1>
-            <p class="lead">This lab will be added as the course progresses.</p>
-            <a class="back-link" href="../index.html">
-                <span aria-hidden="true">←</span> Back to all labs
-            </a>
+        <section class="lab-intro lab6-intro">
+            <p class="eyebrow">Lab 6 · Hierarchical Data Visualization</p>
+            <h1>GDP Hierarchy with Two Treemaps</h1>
+            <p class="lead">
+                Two views divide the same synthetic GDP dataset from continent to area to country.
+                Compare how the layout changes while every country's value and status stay constant.
+            </p>
+
         </section>
+
+        <section class="gdp-legend" aria-labelledby="gdp-legend-heading">
+            <strong id="gdp-legend-heading">GDP status</strong>
+            <div id="status-legend" class="gdp-legend-items"></div>
+        </section>
+
+        <section class="treemap-grid" aria-label="GDP treemap comparison">
+            <article class="chart-card treemap-card" aria-labelledby="squarify-heading">
+                <div class="chart-header treemap-header">
+                    <div>
+                        <h2 id="squarify-heading">Squarify</h2>
+                    </div>
+                    <span class="chart-note">Treemap 01</span>
+                </div>
+                <div id="treemap-squarify" class="treemap-visualization">
+                    <p class="loading">Loading GDP hierarchy…</p>
+                </div>
+            </article>
+
+            <article class="chart-card treemap-card" aria-labelledby="slice-dice-heading">
+                <div class="chart-header treemap-header">
+                    <div>
+                        <h2 id="slice-dice-heading">Slice-Dice</h2>
+                    </div>
+                    <span class="chart-note">Treemap 02</span>
+                </div>
+                <div id="treemap-slice-dice" class="treemap-visualization">
+                    <p class="loading">Loading GDP hierarchy…</p>
+                </div>
+            </article>
+        </section>
+
+        <section class="design-justification lab6-design" aria-labelledby="design-heading">
+            <h2 id="design-heading">Design Description</h2>
+            <h3>Why I chose these visual channels</h3>
+            <p>
+                Rectangle area encodes GDP because a treemap naturally communicates part-to-whole magnitude while
+                preserving the continent-area-country hierarchy. A restrained diverging palette uses teal for Increase,
+                warm gray for Unchanged, and coral for Decrease, making status immediately distinguishable without
+                implying that color represents GDP size. White area boundaries and dark continent headers clarify the
+                nested groups, and country labels appear only when space permits, while tooltips retain exact values and the
+                full hierarchical path for every country.
+            </p>
+            <h3>How the segmentation strategies change readability</h3>
+            <p>
+                The squarified layout keeps rectangles closer to square, so
+                labels fit more often and country areas are easier to compare across the entire world. The slice-dice
+                layout alternates horizontal and vertical subdivision at successive depths. Its long, narrow bands make
+                parent grouping and the hierarchy's branching structure more apparent, but small economies become thin
+                strips with less room for text. Showing both views demonstrates that tiling changes readability and
+                spatial organization, not the underlying GDP values or status encoding.
+            </p>
+        </section>
+
+        <a class="back-link lab6-back-link" href="../index.html">
+            <span aria-hidden="true">←</span> Back to all labs
+        </a>
     </main>
+
+    <div id="gdp-tooltip" class="tooltip gdp-tooltip" role="tooltip" aria-hidden="true"></div>
+
+    <footer>
+        <p>STATS 401 · Data Acquisition and Visualization</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="lab6.js"></script>
 </body>
 </html>
