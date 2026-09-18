@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 7 · STATS 401</title>
+    <meta name="description" content="An interactive D3 network showing how commercial transactions among twelve companies evolve over sixty days.">
+    <title>Lab 7 · Temporal Commercial Network</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="../index.html">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
             <span class="brand-mark">401</span>
             <span>Data Acquisition<br>and Visualization</span>
         </a>
@@ -16,14 +17,124 @@
     </header>
 
     <main>
-        <section class="placeholder">
-            <p class="eyebrow">Lab 7</p>
-            <h1>Coming soon.</h1>
-            <p class="lead">This lab will be added as the course progresses.</p>
-            <a class="back-link" href="../index.html">
-                <span aria-hidden="true">←</span> Back to all labs
-            </a>
+        <section class="lab-intro lab7-intro">
+            <p class="eyebrow">Lab 7 · Temporal Data Visualization</p>
+            <h1>Animated Temporal <span>Commercial Network</span></h1>
+            <p class="lead">
+                Evolving twelve companies' commercial relationships over sixty days.
+            </p>
         </section>
+
+        <section class="chart-card alternative-network-card" aria-labelledby="alternative-heading">
+            <div class="chart-header lab7-chart-header alternative-header">
+                <div>
+                    <h2 id="alternative-heading">Commercial Network</h2>
+                </div>
+                <div class="day-display" aria-live="polite">
+                    <span id="alternative-current-day">Day 1</span>
+                    <strong id="alternative-current-date">January 1, 2026</strong>
+                </div>
+            </div>
+
+            <div class="network-controls alternative-controls" aria-label="Animation controls">
+                <div class="control-buttons">
+                    <button id="alternative-play" class="control-button control-button--primary" type="button">
+                        <span aria-hidden="true">▶</span> Play
+                    </button>
+                    <button id="alternative-pause" class="control-button" type="button">
+                        <span aria-hidden="true">Ⅱ</span> Pause
+                    </button>
+                    <button id="alternative-reset" class="control-button" type="button">
+                        <span aria-hidden="true">↺</span> Reset
+                    </button>
+                </div>
+                <label class="time-control" for="alternative-time-slider">
+                    <span>Day <output id="alternative-slider-value" for="alternative-time-slider">1</output> of 60</span>
+                    <input id="alternative-time-slider" type="range" min="1" max="60" value="1" step="1">
+                    <span class="slider-endpoints" aria-hidden="true"><span>Jan 1</span><span>Mar 1</span></span>
+                </label>
+            </div>
+
+            <div class="alternative-color-legends" aria-label="Network legends and visual encoding">
+                <div class="legend-section">
+                    <strong>Company sector</strong>
+                    <div id="alternative-sector-legend" class="legend-items"></div>
+                </div>
+                <div class="legend-section">
+                    <strong>Transaction type</strong>
+                    <div id="alternative-type-legend" class="legend-items"></div>
+                </div>
+                <div class="alternative-encoding" aria-label="Network visual encoding">
+                    <span>Current Volume: Node Size</span>
+                    <span>Transaction amount (USD): Line Width</span>
+                    <span>Transaction count: Moving pulse density</span>
+                </div>
+            </div>
+
+            <div id="alternative-network" class="temporal-network alternative-network" aria-busy="true">
+                <p class="loading">Building the stable regional layout…</p>
+            </div>
+        </section>
+
+        <section class="findings lab7-findings" aria-labelledby="findings-heading">
+            <h2 id="findings-heading">Temporal Network Questions</h2>
+            <div class="findings-grid lab7-findings-grid">
+                <article>
+                    <div class="finding-meta"><span>01</span></div>
+                    <h3>How does overall network connectivity change across the 60 days?</h3>
+                    <p>
+                        Connectivity fluctuates across the first 40 days, with active links increasing and decreasing
+                        from day to day. After day 40, the network becomes noticeably more connected. All twelve
+                        companies are active on several late-period days.
+                    </p>
+                </article>
+                <article>
+                    <div class="finding-meta"><span>02</span></div>
+                    <h3>Which companies become more central or commercially active over time?</h3>
+                    <p>
+                        BlueRiver and Fusion are prominent early. Fusion dominates days 21-40 through new
+                        ties to Harbor, Lumen, and Juniper. In the final phase, Ion and Cedar become the largest hubs.
+                    </p>
+                </article>
+                <article>
+                    <div class="finding-meta"><span>03</span></div>
+                    <h3>Are there periods when the network consists of relatively separate clusters?</h3>
+                    <p>
+                        Separate clusters are especially visible on days 1, 3, 7, 9, 11, 13, 17, and 19.
+                        On these days, active relationships form several disconnected groups rather than one connected network.
+                    </p>
+                </article>
+                <article>
+                    <div class="finding-meta"><span>04</span></div>
+                    <h3>Which commercial relationships appear, disappear, or become stronger over time?</h3>
+                    <p>
+                        BlueRiver-Delta and Cedar-Fusion disappear after day 20. Fusion gains three strong ties in
+                        days 21-40, then Cedar-Granite, Cedar-Keystone, and Ion-Fusion emerge for the final 20 days.
+                    </p>
+                </article>
+                <article>
+                    <div class="finding-meta"><span>05</span></div>
+                    <h3>Does the network become more or less cross-regional over time?</h3>
+                    <p>
+                        Overall, the network becomes more cross-regional over time, with this pattern becoming more
+                        noticeable in the later days. More links gradually connect companies located in different regions.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <a class="back-link lab7-back-link" href="../index.html">
+            <span aria-hidden="true">←</span> Back to all labs
+        </a>
     </main>
+
+    <div id="temporal-tooltip" class="tooltip temporal-tooltip" role="tooltip" aria-hidden="true"></div>
+
+    <footer>
+        <p>STATS 401 · Data Acquisition and Visualization</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="lab7.js"></script>
 </body>
 </html>
