@@ -1,0 +1,53 @@
+{
+  "raw_passages": 1339,
+  "top_terms": [
+    {
+      "term": "students",
+      "score": 0.03963
+    },
+    {
+      "term": "course",
+      "score": 0.03678
+    },
+    {
+      "term": "chinese",
+      "score": 0.01837
+    },
+    {
+      "term": "university",
+      "score": 0.01824
+    },
+    {
+      "term": "student",
+      "score": 0.01759
+    },
+    {
+      "term": "duke",
+      "score": 0.01744
+    },
+    {
+      "term": "courses",
+      "score": 0.01646
+    },
+    {
+      "term": "credit",
+      "score": 0.01588
+    },
+    {
+      "term": "academic",
+      "score": 0.01577
+    },
+    {
+      "term": "term",
+      "score": 0.01482
+    },
+    {
+      "term": "social",
+      "score": 0.01466
+    },
+    {
+      "term": "prerequisite",
+      "score": 0.01386
+    }
+  ]
+}

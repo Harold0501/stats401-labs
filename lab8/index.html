@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 8 · STATS 401</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta name="description" content="A coordinated semantic map and topic-by-section matrix for the 2021-2022 DKU Undergraduate Bulletin.">
+    <title>Lab 8 · The Bulletin in Semantic Space</title>
+    <link rel="stylesheet" href="../css/style.css?v=2026-09-27-h2-scale">
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="../index.html">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
             <span class="brand-mark">401</span>
             <span>Data Acquisition<br>and Visualization</span>
         </a>
@@ -16,14 +17,216 @@
     </header>
 
     <main>
-        <section class="placeholder">
-            <p class="eyebrow">Lab 8</p>
-            <h1>Coming soon.</h1>
-            <p class="lead">This lab will be added as the course progresses.</p>
-            <a class="back-link" href="../index.html">
-                <span aria-hidden="true">←</span> Back to all labs
-            </a>
+        <section class="lab-intro lab8-intro">
+            <p class="eyebrow">Lab 8 · Web Text Data and Visualization</p>
+            <h1>The Bulletin in <span>Semantic Space</span></h1>
+            <p class="lead">
+                A coordinated exploration of where 2021-2022 DKU Undergraduate Bulletin passages
+                appear in the formal document—and what they mean.
+            </p>
         </section>
+
+        <section class="corpus-overview" aria-labelledby="overview-heading">
+            <div class="section-heading lab8-section-heading">
+                <div>
+                    <h2 id="overview-heading">Bulletin Description & <br>
+                        Corpus overview</h2>
+                </div>
+            </div>
+            <table class="corpus-table" aria-label="Bulletin metadata and corpus statistics">
+                <tbody>
+                    <tr>
+                        <td><span>Title</span><strong>Bulletin of DKU Undergraduate Instruction</strong></td>
+                        <td><span>Raw Passages</span><strong id="raw-passage-count">—</strong></td>
+                    </tr>
+                    <tr>
+                        <td><span>Academic Year</span><strong>2021-2022</strong></td>
+                        <td><span>Clean Passages</span><strong id="clean-passage-count">—</strong></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>Source</span>
+                            <strong><a href="https://dku-web-admissions.s3.cn-north-1.amazonaws.com.cn/dkumain/files/V2021-22_DKU_UG_Bulletin.pdf">DKU UG Bulletin</a></strong>
+                        </td>
+                        <td><span>Average Passage Length</span><strong id="average-passage-length">—</strong></td>
+                    </tr>
+                    <tr>
+                        <td><span>Date Accessed</span><strong>September 22, 2026</strong></td>
+                        <td><span>Formal Sections</span><strong id="formal-section-count">—</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="overview-grid">
+                <article class="mini-chart-card">
+                    <div class="mini-chart-header">
+                        <div>
+                            <h3>Passages by section</h3>
+                        </div>
+                    </div>
+                    <div id="section-summary" class="summary-chart" aria-label="Bar chart of passages by bulletin section"></div>
+                </article>
+                <article class="mini-chart-card">
+                    <div class="mini-chart-header">
+                        <div>
+                            <h3>Top TF-IDF terms</h3>
+                        </div>
+                    </div>
+                    <div id="term-summary" class="summary-chart" aria-label="Bar chart of top corpus TF-IDF terms"></div>
+                </article>
+            </div>
+        </section>
+
+        <section class="chart-card semantic-card" aria-labelledby="semantic-heading">
+            <div class="chart-header lab8-chart-header">
+                <div>
+                    <h2 id="semantic-heading">Semantic embedding map</h2>
+                </div>
+                <button id="reset-map" class="network-reset" type="button">Reset view</button>
+            </div>
+
+            <div class="semantic-controls" aria-label="Semantic map controls">
+                <label>
+                    <span>Search passages</span>
+                    <input id="passage-search" type="search" placeholder="Try credit, graduation, registration…">
+                </label>
+                <label>
+                    <span>Formal section</span>
+                    <select id="section-filter">
+                        <option value="all">All sections</option>
+                    </select>
+                </label>
+                <label>
+                    <span>Semantic topic</span>
+                    <select id="topic-filter">
+                        <option value="all">All topics</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="semantic-legend">
+                <div>
+                    <strong>Color · Semantic topic</strong>
+                    <div id="topic-legend" class="topic-legend-items"></div>
+                </div>
+                <div class="size-legend">
+                    <strong>Size · Passage length</strong>
+                    <span><i class="size-dot size-dot--small"></i> Short</span>
+                    <span><i class="size-dot size-dot--large"></i> Long</span>
+                </div>
+            </div>
+
+            <div class="semantic-workspace">
+                <div id="semantic-map" class="semantic-map" aria-busy="true">
+                    <p class="loading">Projecting the bulletin into semantic space…</p>
+                </div>
+                <aside id="detail-panel" class="passage-detail" aria-live="polite">
+                    <p class="detail-kicker">Details on demand</p>
+                    <h3>Select a passage</h3>
+                    <p>Click any point to inspect its formal location, full text, and nearest semantic neighbors.</p>
+                </aside>
+            </div>
+        </section>
+
+        <section class="chart-card topic-matrix-card" aria-labelledby="matrix-heading">
+            <div class="chart-header lab8-chart-header">
+                <div>
+                    <h2 id="matrix-heading">Topic x Bulletin Section Matrix</h2>
+                </div>
+            </div>
+            <div class="matrix-key" aria-label="Matrix color legend">
+                <span id="matrix-key-min">1 passage</span><i></i><span id="matrix-key-max">More passages</span>
+            </div>
+            <div id="topic-matrix" class="topic-matrix" aria-busy="true">
+                <p class="loading">Counting topics by section…</p>
+            </div>
+        </section>
+
+        <section class="findings lab8-findings" aria-labelledby="findings-heading">
+            <h2 id="findings-heading">Analyze the Bulletin</h2>
+            <div class="findings-grid lab8-findings-grid">
+                <article>
+                    <div class="finding-meta"><span>01</span></div>
+                    <h3>What are the major semantic topics?</h3>
+                    <p id="finding-topics">Loading evidence from the corpus…</p>
+                </article>
+                <article>
+                    <div class="finding-meta"><span>02</span></div>
+                    <h3>Which topics cross formal boundaries?</h3>
+                    <p id="finding-cross-section">Loading evidence from the corpus…</p>
+                </article>
+                <article>
+                    <div class="finding-meta"><span>03</span></div>
+                    <h3>Which formal sections contain the most semantically diverse content?</h3>
+                    <p id="finding-diversity">Loading evidence from the corpus…</p>
+                </article>
+                <article>
+                    <div class="finding-meta"><span>04</span></div>
+                    <h3>Which passages from different sections are semantically similar?</h3>
+                    <p id="finding-neighbors">Loading evidence from the corpus…</p>
+                </article>
+                <article>
+                    <div class="finding-meta"><span>05</span></div>
+                    <h3>Does the concept "credit" occur in one semantic region or across several topics?</h3>
+                    <p id="finding-search">Loading evidence from the corpus…</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="design-justification lab8-design" aria-labelledby="design-heading">
+            <h2 id="design-heading">Design Description and Findings</h2>
+            <p>
+                Passages come from the PDF's own layout where PyMuPDF text blocks were assigned to the
+                bookmark hierarchy (chapter, section, subsection) by locating each bookmark title at the
+                start of a line, and blocks were merged only on layout or continuation evidence such as a
+                lowercase continuation or a bulleted list after a colon. Page margins, footnotes, duplicates,
+                tables, and their lead-in sentences were excluded by fixed rules, and passages longer than the
+                model's 256-token window were split at sentence boundaries, so no text is silently truncated.
+                The whole pipeline runs without manual editing. 
+            </p>
+            <p>
+                Each passage was embedded with the normalized
+                all-MiniLM-L6-v2 sentence transformer. UMAP projected those vectors to two
+                dimensions using 15 neighbors, cosine distance, a 0.15 minimum distance, and random seed 401.
+                K-means grouped the original high-dimensional vectors into nine clusters, and each cluster is
+                named by its three most distinctive terms. Words that appear in many of its passages but
+                comparatively few passages elsewhere. Nine clusters provide a readable resolution with enough
+                topics to separate disciplines, rules, and institutional content, while remaining
+                distinguishable as colors and as matrix columns.
+            </p>
+            <p>
+                In the semantic map, position encodes embedding similarity, color identifies the interpreted
+                topic, and area represents passage length. Search section, and semantic filters retain context
+                by muting rather than removing unmatched points, while zoom and pan support dense regions.
+                Clicking a point anchors the full passage and its five cosine-nearest neighbors in a persistent
+                panel. The matrix complements local neighborhoods with a structural summary. Rows are formal
+                bulletin sections in document order, grouped by Part, columns are semantic topics, and cell
+                darkness is the number of passages on a log scale. 
+                Selecting either a point or matrix cell highlights the corresponding mark in the
+                other view, making mismatches between where a passage appears and what it discusses directly
+                traceable.
+            </p>
+            <p>
+                The overview charts establish corpus scale and a lexical baseline before the model-based
+                views. Muted marks preserve the global UMAP shape during filtering, and encoding counts rather
+                than within-section shares keeps one-passage sections from appearing as dominant as the large
+                ones. Tooltips support quick scanning, while the
+                persistent detail panel keeps source context visible long enough to compare neighboring
+                passages and return to their original pages.
+            </p>
+        </section>
+
+        <a class="back-link lab8-back-link" href="../index.html">
+            <span aria-hidden="true">←</span> Back to all labs
+        </a>
     </main>
+
+    <div id="lab8-tooltip" class="tooltip lab8-tooltip" role="tooltip" aria-hidden="true"></div>
+
+    <footer>
+        <p>STATS 401 · Data Acquisition and Visualization</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="lab8.js?v=2026-09-27-summary-layout"></script>
 </body>
 </html>
