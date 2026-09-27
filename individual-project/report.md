@@ -18,7 +18,7 @@ The chart also asks non-specialists to interpret “Mass or Mass*sin(i)” witho
 
 ### Redesign rationale
 
-The redesign first uses small semi-transparent circles and moves the legend outside the plotting rectangle as a bank of direct filters. Counts reveal the severe category imbalance, and selecting methods removes occlusion rather than merely recoloring it. A colorblind-conscious palette, explicit selected states, text labels, and keyboard-operable controls reduce dependence on color alone.
+The redesign first uses small semi-transparent circles and moves the legend outside the plotting rectangle as a bank of direct filters. Counts reveal the severe category imbalance, and selecting methods removes occlusion rather than merely recoloring it. However, opacity and filters still make a dense cluster difficult to characterize quantitatively. The redesign therefore introduces linked aggregation: users can brush any region of mass–period space and immediately see its exact population, discovery-method composition, and discoveries by year. Marks outside the selection recede while the selected population remains prominent. This converts an uncertain visual judgment—“this area looks dense”—into a quantitative comparison. A colorblind-conscious palette, explicit selected states, text labels, and keyboard-operable controls reduce dependence on color alone.
 
 Second, details appear on demand. Hover, click, search, or keyboard navigation reveals the planet name, period, mass in Jupiter and Earth units, uncertainty, mass provenance, discovery method, year, and facility. Selecting a planet draws its available uncertainty intervals directly on the plot. The explanatory note defines log spacing and M sin(i), addressing the original’s most consequential technical ambiguity without placing thousands of labels on the chart.
 
@@ -26,9 +26,9 @@ Third, Solar System planets occupy a dedicated foreground layer with full names 
 
 ### Original vs. redesign
 
-The original remains faster as a single static overview and its varied marker shapes print well at large size. The redesign instead makes method comparison, planet lookup, uncertainty inspection, and Solar System comparison substantially easier. It also reveals that visible density reflects what instruments can detect, not the true frequency of planets.
+The original remains faster as a single static overview and its varied marker shapes print well at large size. The redesign instead makes method comparison, planet lookup, uncertainty inspection, regional population comparison, and Solar System comparison substantially easier. It also reveals that visible density reflects what instruments can detect, not the true frequency of planets.
 
-Important limitations remain. The dataset excludes confirmed planets missing either plotted measurement, combines measured masses with inclination-dependent estimates, and inherits strong discovery biases. Transparency improves overlap but does not provide a formal density estimate. Interaction also demands more attention than a static figure, and the live archive will change after this dated snapshot. The redesign exposes these constraints; it cannot remove them.
+Important limitations remain. The dataset excludes confirmed planets missing either plotted measurement, combines measured masses with inclination-dependent estimates, and inherits strong discovery biases. Linked counts improve regional comparison, but user-drawn brush boundaries do not provide a formal density estimate. Interaction also demands more attention than a static figure, and the live archive will change after this dated snapshot. The redesign exposes these constraints; it cannot remove them.
 
 ## Figures
 

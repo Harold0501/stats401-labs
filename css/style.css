@@ -762,9 +762,60 @@ footer p {
     font-weight: 800;
 }
 
+.interaction-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin: 0 0 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: #f8f5ec;
+}
+
+.interaction-modes {
+    display: inline-flex;
+    gap: 4px;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--card);
+}
+
+.interaction-modes button {
+    padding: 7px 10px;
+    border: 0;
+    border-radius: 5px;
+    color: var(--muted);
+    background: transparent;
+    font: inherit;
+    font-size: 0.69rem;
+    font-weight: 850;
+    cursor: pointer;
+}
+
+.interaction-modes button.is-active {
+    color: var(--card);
+    background: var(--ink);
+}
+
+.interaction-modes button:focus-visible {
+    outline: 3px solid rgba(31, 109, 102, 0.28);
+    outline-offset: 2px;
+}
+
+.interaction-toolbar p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 750;
+    text-align: right;
+}
+
 .exoplanet-workspace {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 270px;
+    grid-template-columns: minmax(0, 1fr) 300px;
     gap: 15px;
     align-items: stretch;
 }
@@ -829,6 +880,16 @@ footer p {
     stroke-width: 1.6px;
 }
 
+.exo-point.is-brush-muted {
+    opacity: 0.055;
+}
+
+.exo-point.is-brush-selected {
+    opacity: 0.94;
+    stroke: rgba(16, 42, 42, 0.78);
+    stroke-width: 1.15px;
+}
+
 .exo-point.is-hidden,
 .solar-planet.is-hidden {
     display: none;
@@ -874,6 +935,32 @@ footer p {
     stroke-linecap: round;
     stroke-width: 2px;
     pointer-events: none;
+}
+
+.population-brush .overlay {
+    cursor: crosshair;
+}
+
+.population-brush .selection {
+    fill: rgba(229, 87, 50, 0.12);
+    stroke: var(--accent);
+    stroke-dasharray: 5 3;
+    stroke-width: 2px;
+}
+
+.population-brush .handle {
+    fill: var(--accent);
+    opacity: 0.72;
+}
+
+.population-brush.is-disabled .overlay,
+.population-brush.is-disabled .selection,
+.population-brush.is-disabled .handle {
+    pointer-events: none;
+}
+
+.exoplanet-chart.is-brushing svg {
+    cursor: crosshair;
 }
 
 .planet-detail {
@@ -945,6 +1032,127 @@ footer p {
     border-radius: 6px;
     color: var(--teal);
     font-size: 0.69rem;
+}
+
+.population-range {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 16px 0 22px;
+}
+
+.population-range > div {
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--card);
+}
+
+.population-range span,
+.population-range strong {
+    display: block;
+}
+
+.population-range span {
+    margin-bottom: 4px;
+    color: var(--muted);
+    font-size: 0.58rem;
+    font-weight: 850;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.population-range strong {
+    font-size: 0.65rem;
+    line-height: 1.45;
+}
+
+.population-methods,
+.population-years {
+    margin-bottom: 23px;
+}
+
+.population-methods h4,
+.population-years h4 {
+    margin: 0 0 11px;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.population-method-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 8px;
+    margin-bottom: 9px;
+    color: var(--ink);
+    font-size: 0.64rem;
+    font-weight: 750;
+}
+
+.population-method-row > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.population-method-row > strong {
+    font-variant-numeric: tabular-nums;
+}
+
+.population-method-row > i {
+    height: 5px;
+    grid-column: 1 / -1;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(96, 113, 110, 0.14);
+}
+
+.population-method-row > i > b {
+    width: var(--population-width);
+    height: 100%;
+    display: block;
+    border-radius: inherit;
+    background: var(--population-color);
+}
+
+.population-section-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.population-section-heading span {
+    color: var(--muted);
+    font-size: 0.58rem;
+    font-weight: 750;
+}
+
+#population-year-chart {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+}
+
+.year-spark-bar {
+    fill: var(--teal);
+}
+
+.year-spark-baseline {
+    stroke: var(--line);
+    stroke-width: 1px;
+}
+
+.population-year-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 0.58rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 750;
 }
 
 .project-tooltip {
@@ -1242,6 +1450,20 @@ footer p {
 
     .project-sources {
         gap: 26px;
+    }
+
+    .interaction-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .interaction-modes {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .interaction-toolbar p {
+        text-align: left;
     }
 
     .project-tabs {

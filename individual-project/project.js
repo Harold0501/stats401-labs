@@ -73,6 +73,9 @@
     const yearOutput = document.querySelector("#year-output");
     const solarToggle = document.querySelector("#solar-toggle");
     const controls = document.querySelector("#exoplanet-controls");
+    const inspectModeButton = document.querySelector("#inspect-mode");
+    const brushModeButton = document.querySelector("#brush-mode");
+    const interactionHint = document.querySelector("#interaction-hint");
 
     const state = {
         methods: new Set(),
@@ -81,6 +84,9 @@
         search: "",
         showSolar: true,
         selected: null,
+        interactionMode: "inspect",
+        brushSelection: null,
+        brushedPlanets: [],
         keyboardIndex: -1
     };
 
@@ -91,9 +97,12 @@
     let pointSelection;
     let solarSelection;
     let selectionLayer;
+    let brushLayer;
+    let brushBehavior;
     let xScale;
     let yScale;
     let svg;
+    let brushFrame;
 
     const methodColor = (method) => colors.get(method) || fallbackColor;
 
@@ -188,7 +197,7 @@
 
         svg.append("desc")
             .attr("id", "chart-svg-description")
-            .text("A logarithmic scatterplot. Use the controls to filter the data. With the plot focused, use the left and right arrow keys to inspect visible planets.");
+            .text("A logarithmic scatterplot. Use the controls to filter the data, inspect individual planets, or brush a rectangular region for a linked population summary.");
 
         svg.append("defs")
             .append("clipPath")
@@ -297,25 +306,70 @@
             .attr("class", "selection-layer")
             .attr("clip-path", "url(#exoplanet-plot-clip)");
 
+        brushBehavior = d3.brush()
+            .extent([[margin.left, margin.top], [width - margin.right, height - margin.bottom]])
+            .filter((event) => state.interactionMode === "brush" && !event.ctrlKey && (event.button == null || event.button === 0))
+            .on("start brush end", handleBrush);
+
+        brushLayer = svg.append("g")
+            .attr("class", "population-brush is-disabled")
+            .attr("role", "group")
+            .attr("aria-label", "Rectangular population selection")
+            .call(brushBehavior);
+
         svg.on("keydown", handleChartKeydown);
         chartHost.setAttribute("aria-busy", "false");
         update();
 
+        if (captureMode) {
+            state.interactionMode = "brush";
+            update();
+            brushLayer.call(brushBehavior.move, [
+                [xScale(1), yScale(5)],
+                [xScale(100), yScale(0.005)]
+            ]);
+        }
+
+    };
+
+    const planetsInsideBrush = (selection) => {
+        if (!selection) return [];
+        const [[x0, y0], [x1, y1]] = selection;
+        return visiblePlanets.filter((planet) => {
+            const x = xScale(planet.pl_orbper);
+            const y = yScale(planet.pl_bmassj);
+            return x >= x0 && x <= x1 && y >= y0 && y <= y1;
+        });
     };
 
     const update = () => {
         visiblePlanets = exoplanets.filter(isVisible).sort((a, b) => d3.ascending(a.pl_orbper, b.pl_orbper));
         const visibleNames = new Set(visiblePlanets.map((planet) => planet.pl_name));
+        state.brushedPlanets = planetsInsideBrush(state.brushSelection);
+        const brushedNames = new Set(state.brushedPlanets.map((planet) => planet.pl_name));
+        const hasBrush = Boolean(state.brushSelection);
 
         pointSelection
             .classed("is-hidden", (planet) => !visibleNames.has(planet.pl_name))
             .classed("is-selected", (planet) => state.selected?.kind === "exoplanet" && state.selected.datum.pl_name === planet.pl_name)
-            .attr("pointer-events", (planet) => visibleNames.has(planet.pl_name) ? "auto" : "none");
+            .classed("is-brush-selected", (planet) => hasBrush && brushedNames.has(planet.pl_name))
+            .classed("is-brush-muted", (planet) => hasBrush && visibleNames.has(planet.pl_name) && !brushedNames.has(planet.pl_name))
+            .attr("pointer-events", (planet) => visibleNames.has(planet.pl_name) && state.interactionMode === "inspect" ? "auto" : "none");
 
         solarSelection
             .classed("is-hidden", !state.showSolar)
             .classed("is-selected", (planet) => state.selected?.kind === "solar" && state.selected.datum.name === planet.name)
-            .attr("pointer-events", state.showSolar ? "auto" : "none");
+            .attr("pointer-events", state.showSolar && state.interactionMode === "inspect" ? "auto" : "none");
+
+        inspectModeButton.classList.toggle("is-active", state.interactionMode === "inspect");
+        inspectModeButton.setAttribute("aria-pressed", `${state.interactionMode === "inspect"}`);
+        brushModeButton.classList.toggle("is-active", state.interactionMode === "brush");
+        brushModeButton.setAttribute("aria-pressed", `${state.interactionMode === "brush"}`);
+        brushLayer.classed("is-disabled", state.interactionMode !== "brush");
+        chartHost.classList.toggle("is-brushing", state.interactionMode === "brush");
+        interactionHint.textContent = state.interactionMode === "brush"
+            ? (hasBrush ? "Drag again to replace the selection; use the panel to clear it." : "Drag a rectangle across the plot to summarize that population.")
+            : "Point to or click a planet for details.";
 
         document.querySelectorAll(".method-button").forEach((button) => {
             const active = state.methods.has(button.dataset.method);
@@ -342,7 +396,10 @@
         const searchPhrase = state.search ? ` matching “${searchInput.value.trim()}”` : "";
         const provenancePhrase = state.provenance === "all" ? "all mass types" : provenanceLabel(state.provenance);
         const solarPhrase = state.showSolar ? "Solar System reference on" : "Solar System reference off";
-        summary.textContent = `Showing ${visiblePlanets.length.toLocaleString()} of ${exoplanets.length.toLocaleString()} confirmed planets${searchPhrase} through ${state.year} · ${methodPhrase} · ${provenancePhrase} · ${solarPhrase}.`;
+        const brushPhrase = state.brushSelection
+            ? ` · selected population ${state.brushedPlanets.length.toLocaleString()} planets`
+            : "";
+        summary.textContent = `Showing ${visiblePlanets.length.toLocaleString()} of ${exoplanets.length.toLocaleString()} confirmed planets${searchPhrase} through ${state.year} · ${methodPhrase} · ${provenancePhrase} · ${solarPhrase}${brushPhrase}.`;
         accessSummary.textContent = `${summary.textContent} The x axis spans 0.08 to 10 million Earth days. The y axis spans 0.00005 to 40 Jupiter masses. Both axes are logarithmic.`;
     };
 
@@ -388,17 +445,165 @@
             .attr("r", kind === "solar" ? 11 : 8);
     };
 
-    const renderDetail = () => {
-        if (!state.selected) {
+    const renderYearSpark = (planets) => {
+        const chart = detail.querySelector("#population-year-chart");
+        if (!chart || !planets.length) return;
+
+        const minYear = d3.min(exoplanets, (planet) => planet.disc_year);
+        const maxYear = d3.max(exoplanets, (planet) => planet.disc_year);
+        const yearCounts = d3.rollup(planets, (values) => values.length, (planet) => planet.disc_year);
+        const years = d3.range(minYear, maxYear + 1).map((year) => ({ year, count: yearCounts.get(year) || 0 }));
+        const peak = d3.greatest(years, (entry) => entry.count);
+        const width = 250;
+        const height = 76;
+        const margin = { top: 8, right: 1, bottom: 5, left: 1 };
+        const x = d3.scaleBand()
+            .domain(years.map((entry) => entry.year))
+            .range([margin.left, width - margin.right])
+            .padding(0.14);
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(years, (entry) => entry.count) || 1])
+            .nice()
+            .range([height - margin.bottom, margin.top]);
+
+        const spark = d3.select(chart)
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("role", "img")
+            .attr("aria-label", `Discoveries by year for the selected population. Peak: ${peak.count} planets in ${peak.year}.`);
+
+        spark.append("title")
+            .text(`Discoveries by year. Peak: ${peak.count} planets in ${peak.year}.`);
+
+        spark.append("line")
+            .attr("class", "year-spark-baseline")
+            .attr("x1", margin.left)
+            .attr("x2", width - margin.right)
+            .attr("y1", height - margin.bottom)
+            .attr("y2", height - margin.bottom);
+
+        spark.selectAll("rect")
+            .data(years)
+            .join("rect")
+            .attr("class", "year-spark-bar")
+            .attr("x", (entry) => x(entry.year))
+            .attr("y", (entry) => y(entry.count))
+            .attr("width", x.bandwidth())
+            .attr("height", (entry) => Math.max(0, height - margin.bottom - y(entry.count)));
+
+        const peakLabel = detail.querySelector("#population-year-peak");
+        if (peakLabel) peakLabel.textContent = `Peak ${peak.year}: ${peak.count.toLocaleString()}`;
+    };
+
+    const renderPopulationSummary = () => {
+        const planets = state.brushedPlanets;
+        if (!planets.length) {
             detail.innerHTML = `
-                <p class="detail-kicker">Details on demand</p>
-                <h3>Select a planet</h3>
-                <p>Point to a mark, click it, search by name, or focus the chart and use the arrow keys.</p>
-                <dl class="planet-detail-list">
-                    <dt>X</dt><dd>Orbital period in Earth days</dd>
-                    <dt>Y</dt><dd>Best mass in Jupiter masses</dd>
-                    <dt>Color</dt><dd>Discovery method</dd>
-                </dl>`;
+                <p class="detail-kicker">Selected population</p>
+                <h3>No planets</h3>
+                <p>The brushed region contains no currently visible planets. Drag a new rectangle or clear the selection.</p>
+                <button class="detail-clear" id="clear-population" type="button">Clear brush</button>`;
+            detail.querySelector("#clear-population").addEventListener("click", clearBrush);
+            return;
+        }
+
+        const periodExtent = d3.extent(planets, (planet) => planet.pl_orbper);
+        const massExtent = d3.extent(planets, (planet) => planet.pl_bmassj);
+        const counts = Array.from(d3.rollup(planets, (values) => values.length, (planet) => planet.discoverymethod))
+            .sort((a, b) => d3.descending(a[1], b[1]));
+        const rows = counts.slice(0, 4).map(([method, count]) => ({ method, count, color: methodColor(method) }));
+
+        if (counts.length > 4) {
+            rows.push({
+                method: "Other",
+                count: d3.sum(counts.slice(4), ([, count]) => count),
+                color: "#7f8d89"
+            });
+        }
+
+        const maxCount = d3.max(rows, (row) => row.count) || 1;
+        const methodRows = rows.map((row) => {
+            const width = (row.count / maxCount) * 100;
+            const share = (row.count / planets.length) * 100;
+            return `
+                <div class="population-method-row" aria-label="${escapeHtml(row.method)}: ${row.count} planets, ${d3.format(".1f")(share)} percent">
+                    <span>${escapeHtml(row.method)}</span>
+                    <strong>${row.count.toLocaleString()}</strong>
+                    <i><b style="--population-width:${width}%;--population-color:${row.color}"></b></i>
+                </div>`;
+        }).join("");
+
+        detail.innerHTML = `
+            <p class="detail-kicker">Selected population</p>
+            <h3>${planets.length.toLocaleString()} planets</h3>
+            <div class="population-range" aria-label="Selected data range">
+                <div><span>Period</span><strong>${formatPeriod(periodExtent[0])}<br>to ${formatPeriod(periodExtent[1])}</strong></div>
+                <div><span>Mass</span><strong>${formatJupiterMass(massExtent[0])}<br>to ${formatJupiterMass(massExtent[1])}</strong></div>
+            </div>
+            <section class="population-methods" aria-labelledby="population-methods-heading">
+                <h4 id="population-methods-heading">Discovery method</h4>
+                ${methodRows}
+            </section>
+            <section class="population-years" aria-labelledby="population-years-heading">
+                <div class="population-section-heading">
+                    <h4 id="population-years-heading">Discoveries by year</h4>
+                    <span id="population-year-peak"></span>
+                </div>
+                <svg id="population-year-chart"></svg>
+                <div class="population-year-labels"><span>${d3.min(exoplanets, (planet) => planet.disc_year)}</span><span>${d3.max(exoplanets, (planet) => planet.disc_year)}</span></div>
+            </section>
+            <button class="detail-clear" id="clear-population" type="button">Clear brush</button>`;
+
+        renderYearSpark(planets);
+        detail.querySelector("#clear-population").addEventListener("click", clearBrush);
+    };
+
+    const handleBrush = (event) => {
+        state.brushSelection = event.selection;
+        state.selected = null;
+        if (brushFrame) cancelAnimationFrame(brushFrame);
+        brushFrame = requestAnimationFrame(() => {
+            brushFrame = null;
+            update();
+        });
+    };
+
+    const clearBrush = () => {
+        if (brushLayer && state.brushSelection) {
+            brushLayer.call(brushBehavior.move, null);
+        } else {
+            state.brushSelection = null;
+            state.brushedPlanets = [];
+            update();
+        }
+    };
+
+    const setInteractionMode = (mode) => {
+        state.interactionMode = mode;
+        state.selected = null;
+        hideTooltip();
+        if (mode === "inspect" && state.brushSelection) clearBrush();
+        else update();
+    };
+
+    const renderDetail = () => {
+        if (state.brushSelection) {
+            renderPopulationSummary();
+            return;
+        }
+
+        if (!state.selected) {
+            detail.innerHTML = state.interactionMode === "brush"
+                ? `<p class="detail-kicker">Linked population analysis</p>
+                   <h3>Brush a region</h3>
+                   <p>Drag a rectangle across the mass–period plot. This panel will summarize the selected population by discovery method and year.</p>`
+                : `<p class="detail-kicker">Details on demand</p>
+                   <h3>Select a planet</h3>
+                   <p>Point to a mark, click it, search by name, or focus the chart and use the arrow keys.</p>
+                   <dl class="planet-detail-list">
+                       <dt>X</dt><dd>Orbital period in Earth days</dd>
+                       <dt>Y</dt><dd>Best mass in Jupiter masses</dd>
+                       <dt>Color</dt><dd>Discovery method</dd>
+                   </dl>`;
             return;
         }
 
@@ -443,6 +648,8 @@
     };
 
     const selectPlanet = (datum, kind) => {
+        state.interactionMode = "inspect";
+        if (state.brushSelection && brushLayer) brushLayer.call(brushBehavior.move, null);
         state.selected = { datum, kind };
         if (kind === "exoplanet") {
             state.keyboardIndex = visiblePlanets.findIndex((planet) => planet.pl_name === datum.pl_name);
@@ -478,7 +685,7 @@
     };
 
     const handleChartKeydown = (event) => {
-        if (!visiblePlanets.length) return;
+        if (!visiblePlanets.length || state.interactionMode !== "inspect") return;
         const handledKeys = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Home", "End"];
         if (!handledKeys.includes(event.key)) return;
         event.preventDefault();
@@ -531,6 +738,9 @@
         update();
     });
 
+    inspectModeButton.addEventListener("click", () => setInteractionMode("inspect"));
+    brushModeButton.addEventListener("click", () => setInteractionMode("brush"));
+
     controls.addEventListener("reset", (event) => {
         event.preventDefault();
         searchInput.value = "";
@@ -543,6 +753,10 @@
         state.showSolar = true;
         state.methods = new Set(methods);
         state.selected = null;
+        state.interactionMode = "inspect";
+        if (state.brushSelection && brushLayer) brushLayer.call(brushBehavior.move, null);
+        state.brushSelection = null;
+        state.brushedPlanets = [];
         state.keyboardIndex = -1;
         update();
     });

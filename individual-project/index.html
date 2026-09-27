@@ -55,7 +55,7 @@
                 <div>
                     <p class="eyebrow">Part I · Redesigned visualization</p>
                     <h2 id="redesign-heading">Explore the worlds we can measure</h2>
-                    <p>Filter the population, then point to or select a planet to inspect its measurement and discovery context.</p>
+                    <p>Inspect individual planets or brush a region to quantify its discovery-method mix and discovery history.</p>
                 </div>
                 <span class="chart-note">D3.js · log–log</span>
             </div>
@@ -102,6 +102,14 @@
 
             <div class="chart-summary" id="chart-summary" aria-live="polite">Loading confirmed planets…</div>
 
+            <div class="interaction-toolbar">
+                <div class="interaction-modes" role="group" aria-label="Chart interaction mode">
+                    <button class="is-active" id="inspect-mode" type="button" aria-pressed="true">Inspect planets</button>
+                    <button id="brush-mode" type="button" aria-pressed="false">Brush population</button>
+                </div>
+                <p id="interaction-hint">Point to or click a planet for details.</p>
+            </div>
+
             <div class="exoplanet-workspace">
                 <div class="exoplanet-chart" id="exoplanet-chart" aria-busy="true">
                     <div class="loading">Loading the NASA Exoplanet Archive snapshot…</div>
@@ -109,7 +117,7 @@
                 <aside class="planet-detail" id="planet-detail" aria-live="polite">
                     <p class="detail-kicker">Details on demand</p>
                     <h3>Select a planet</h3>
-                    <p>Point to a mark, click it, search by name, or focus the chart and use the arrow keys.</p>
+                    <p>Inspect a mark, or choose “Brush population” and drag across the plot for a linked summary.</p>
                     <dl class="planet-detail-list">
                         <dt>X</dt><dd>Orbital period in Earth days</dd>
                         <dt>Y</dt><dd>Best mass in Jupiter masses</dd>
@@ -119,13 +127,13 @@
             </div>
 
             <div class="project-tooltip" id="project-tooltip" role="tooltip" hidden></div>
-            <p class="keyboard-note">Keyboard: focus the plot, then use ←/→ to move through visible planets and Home/End to jump.</p>
+            <p class="keyboard-note">Keyboard: in Inspect mode, focus the plot, then use ←/→ to move through visible planets and Home/End to jump.</p>
             <p class="chart-access-summary visually-hidden" id="chart-access-summary"></p>
             <noscript><p class="chart-error">JavaScript is required for the interactive redesign.</p></noscript>
 
             <figure class="redesign-caption">
                 <figcaption>
-                    Figure 2. Interactive redesign using 2,819 confirmed planets from the NASA Planetary Systems table and eight JPL Solar System reference planets. The committed data snapshot was retrieved September 27, 2026.
+                    Figure 2. Linked interactive redesign using 2,819 confirmed planets from the NASA Planetary Systems table and eight JPL Solar System reference planets. Brush selection connects individual marks to population-level method and discovery-year summaries. Data retrieved September 27, 2026.
                 </figcaption>
             </figure>
         </section>
