@@ -765,7 +765,7 @@ footer p {
 .interaction-toolbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 18px;
     margin: 0 0 14px;
     padding: 8px 10px;
@@ -774,43 +774,17 @@ footer p {
     background: #f8f5ec;
 }
 
-.interaction-modes {
-    display: inline-flex;
-    gap: 4px;
-    padding: 3px;
-    border: 1px solid var(--line);
-    border-radius: 7px;
-    background: var(--card);
-}
-
-.interaction-modes button {
-    padding: 7px 10px;
-    border: 0;
-    border-radius: 5px;
-    color: var(--muted);
-    background: transparent;
-    font: inherit;
-    font-size: 0.69rem;
-    font-weight: 850;
-    cursor: pointer;
-}
-
-.interaction-modes button.is-active {
-    color: var(--card);
-    background: var(--ink);
-}
-
-.interaction-modes button:focus-visible {
-    outline: 3px solid rgba(31, 109, 102, 0.28);
-    outline-offset: 2px;
-}
-
 .interaction-toolbar p {
     margin: 0;
     color: var(--muted);
     font-size: 0.7rem;
     font-weight: 750;
-    text-align: right;
+    text-align: left;
+}
+
+.interaction-toolbar strong {
+    margin-right: 5px;
+    color: var(--ink);
 }
 
 .exoplanet-workspace {
@@ -951,16 +925,6 @@ footer p {
 .population-brush .handle {
     fill: var(--accent);
     opacity: 0.72;
-}
-
-.population-brush.is-disabled .overlay,
-.population-brush.is-disabled .selection,
-.population-brush.is-disabled .handle {
-    pointer-events: none;
-}
-
-.exoplanet-chart.is-brushing svg {
-    cursor: crosshair;
 }
 
 .planet-detail {
@@ -1455,11 +1419,6 @@ footer p {
     .interaction-toolbar {
         align-items: stretch;
         flex-direction: column;
-    }
-
-    .interaction-modes {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .interaction-toolbar p {

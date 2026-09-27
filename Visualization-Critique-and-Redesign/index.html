@@ -103,11 +103,7 @@
             <div class="chart-summary" id="chart-summary" aria-live="polite">Loading confirmed planets…</div>
 
             <div class="interaction-toolbar">
-                <div class="interaction-modes" role="group" aria-label="Chart interaction mode">
-                    <button class="is-active" id="inspect-mode" type="button" aria-pressed="true">Inspect planets</button>
-                    <button id="brush-mode" type="button" aria-pressed="false">Brush population</button>
-                </div>
-                <p id="interaction-hint">Point to or click a planet for details.</p>
+                <p id="interaction-hint"><strong>Direct interaction</strong> Click a planet for details, or drag across empty plot space to summarize a population.</p>
             </div>
 
             <div class="exoplanet-workspace">
@@ -115,9 +111,9 @@
                     <div class="loading">Loading the NASA Exoplanet Archive snapshot…</div>
                 </div>
                 <aside class="planet-detail" id="planet-detail" aria-live="polite">
-                    <p class="detail-kicker">Details on demand</p>
-                    <h3>Select a planet</h3>
-                    <p>Inspect a mark, or choose “Brush population” and drag across the plot for a linked summary.</p>
+                    <p class="detail-kicker">Details on demand · Linked population analysis</p>
+                    <h3>Select a planet or brush a region</h3>
+                    <p>Click a mark for planet details, or drag across empty plot space for a linked population summary.</p>
                     <dl class="planet-detail-list">
                         <dt>X</dt><dd>Orbital period in Earth days</dd>
                         <dt>Y</dt><dd>Best mass in Jupiter masses</dd>
@@ -127,7 +123,7 @@
             </div>
 
             <div class="project-tooltip" id="project-tooltip" role="tooltip" hidden></div>
-            <p class="keyboard-note">Keyboard: in Inspect mode, focus the plot, then use ←/→ to move through visible planets and Home/End to jump.</p>
+            <p class="keyboard-note">Keyboard: focus the plot, then use ←/→ to move through visible planets and Home/End to jump.</p>
             <p class="chart-access-summary visually-hidden" id="chart-access-summary"></p>
             <noscript><p class="chart-error">JavaScript is required for the interactive redesign.</p></noscript>
 
