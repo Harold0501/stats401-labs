@@ -1,0 +1,9 @@
+name,label,orbital_period_days,mass_1e24_kg,mass_jupiter,source
+Mercury,Me,87.969257,0.330103,0.000173910043,JPL Planetary Physical Parameters
+Venus,V,224.700799,4.867310,0.002564272637,JPL Planetary Physical Parameters
+Earth,E,365.256355,5.972170,0.003146352321,JPL Planetary Physical Parameters
+Mars,Ma,686.979586,0.641691,0.000338065723,JPL Planetary Physical Parameters
+Jupiter,J,4332.820129,1898.125000,1.000000000000,JPL Planetary Physical Parameters
+Saturn,S,10755.698645,568.317000,0.299409680606,JPL Planetary Physical Parameters
+Uranus,U,30687.153002,86.809900,0.045734553836,JPL Planetary Physical Parameters
+Neptune,N,60190.029630,102.409200,0.053952821864,JPL Planetary Physical Parameters

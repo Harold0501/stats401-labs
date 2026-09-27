@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A visualization critique and D3.js redesign of NASA's exoplanet mass–period plot.">
+    <title>Exoplanet Mass–Period Redesign · STATS 401</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
+            <span class="brand-mark">401</span>
+            <span>Data Acquisition<br>and Visualization</span>
+        </a>
+        <span class="course-tag">Individual Project</span>
+    </header>
+
+    <main>
+        <section class="lab-intro project-intro">
+            <p class="eyebrow">Visualization Critique and Redesign</p>
+            <h1>Exoplanets in <span>mass–period space.</span></h1>
+            <p class="lead">
+                NASA’s original view reveals the extraordinary range of known worlds.
+                This redesign makes its discovery patterns, measurement differences,
+                and Solar System reference easier to inspect.
+            </p>
+            <nav class="project-tabs" aria-label="Individual project pages">
+                <a class="is-active" href="index.html" aria-current="page">Visualization</a>
+                <a href="report.html">Report</a>
+            </nav>
+        </section>
+
+        <section class="chart-card project-original" id="original" aria-labelledby="original-heading">
+            <div class="chart-header project-chart-header">
+                <div>
+                    <p class="eyebrow">Part I · Original visualization</p>
+                    <h2 id="original-heading">Planet Mass vs. Orbital Period</h2>
+                    <p>Confirmed planets are positioned on logarithmic axes and grouped by discovery method.</p>
+                </div>
+                <a class="source-link" href="https://exoplanetarchive.ipac.caltech.edu/exoplanetplots/" target="_blank" rel="noreferrer">NASA source ↗</a>
+            </div>
+            <figure class="original-figure">
+                <a href="https://exoplanetarchive.ipac.caltech.edu/exoplanetplots/nea_scatter_PS_output_pl_orbper_pl_bmassj_pres.png" target="_blank" rel="noreferrer">
+                    <img src="assets/nasa_exoplanet_mass_period.png" width="5750" height="3500" alt="NASA scatterplot of confirmed planets by orbital period and mass, colored and shaped by discovery method, with Solar System planets highlighted.">
+                </a>
+                <figcaption>
+                    Figure 1. NASA Exoplanet Archive, “Planet Mass or Mass*sin(i) vs Orbital Period.” Local snapshot retrieved September 27, 2026; the source image is dated September 25, 2026.
+                </figcaption>
+            </figure>
+        </section>
+
+        <section class="chart-card project-redesign" id="redesign" aria-labelledby="redesign-heading">
+            <div class="chart-header project-chart-header">
+                <div>
+                    <p class="eyebrow">Part I · Redesigned visualization</p>
+                    <h2 id="redesign-heading">Explore the worlds we can measure</h2>
+                    <p>Filter the population, then point to or select a planet to inspect its measurement and discovery context.</p>
+                </div>
+                <span class="chart-note">D3.js · log–log</span>
+            </div>
+
+            <div class="project-chart-note" role="note">
+                <strong>How to read it:</strong> farther right means a longer year; higher means more massive.
+                Equal spacing represents a tenfold change. “M sin(i)” is a minimum mass inferred when orbital inclination is unknown.
+            </div>
+
+            <form class="exoplanet-controls" id="exoplanet-controls">
+                <div class="control-primary">
+                    <label class="project-control project-search-control">
+                        <span>Find a planet</span>
+                        <input id="planet-search" type="search" placeholder="e.g. Kepler-16 b" autocomplete="off">
+                    </label>
+                    <label class="project-control">
+                        <span>Mass measurement</span>
+                        <select id="mass-provenance">
+                            <option value="all">All best masses</option>
+                            <option value="Mass">Measured mass</option>
+                            <option value="Msini">Minimum mass · M sin(i)</option>
+                            <option value="Msin(i)/sin(i)">Derived mass · M sin(i) / sin(i)</option>
+                        </select>
+                    </label>
+                    <label class="project-control project-year-control">
+                        <span>Discovered by <output id="year-output" for="year-cutoff">2026</output></span>
+                        <input id="year-cutoff" type="range" min="1992" max="2026" value="2026" step="1">
+                    </label>
+                    <label class="project-checkbox">
+                        <input id="solar-toggle" type="checkbox" checked>
+                        <span>Solar System reference</span>
+                    </label>
+                    <button class="project-reset" id="project-reset" type="reset">Reset view</button>
+                </div>
+
+                <fieldset class="method-filter">
+                    <legend>Discovery methods <span>select to show or hide</span></legend>
+                    <div class="method-actions">
+                        <button id="method-all" type="button">Select all</button>
+                    </div>
+                    <div class="method-buttons" id="method-buttons"></div>
+                </fieldset>
+            </form>
+
+            <div class="chart-summary" id="chart-summary" aria-live="polite">Loading confirmed planets…</div>
+
+            <div class="exoplanet-workspace">
+                <div class="exoplanet-chart" id="exoplanet-chart" aria-busy="true">
+                    <div class="loading">Loading the NASA Exoplanet Archive snapshot…</div>
+                </div>
+                <aside class="planet-detail" id="planet-detail" aria-live="polite">
+                    <p class="detail-kicker">Details on demand</p>
+                    <h3>Select a planet</h3>
+                    <p>Point to a mark, click it, search by name, or focus the chart and use the arrow keys.</p>
+                    <dl class="planet-detail-list">
+                        <dt>X</dt><dd>Orbital period in Earth days</dd>
+                        <dt>Y</dt><dd>Best mass in Jupiter masses</dd>
+                        <dt>Color</dt><dd>Discovery method</dd>
+                    </dl>
+                </aside>
+            </div>
+
+            <div class="project-tooltip" id="project-tooltip" role="tooltip" hidden></div>
+            <p class="keyboard-note">Keyboard: focus the plot, then use ←/→ to move through visible planets and Home/End to jump.</p>
+            <p class="chart-access-summary visually-hidden" id="chart-access-summary"></p>
+            <noscript><p class="chart-error">JavaScript is required for the interactive redesign.</p></noscript>
+
+            <figure class="redesign-caption">
+                <figcaption>
+                    Figure 2. Interactive redesign using 2,819 confirmed planets from the NASA Planetary Systems table and eight JPL Solar System reference planets. The committed data snapshot was retrieved September 27, 2026.
+                </figcaption>
+            </figure>
+        </section>
+
+        <section class="project-sources" id="sources" aria-labelledby="sources-heading">
+            <div>
+                <p class="eyebrow">Data & references</p>
+                <h2 id="sources-heading">Sources and reproducibility</h2>
+            </div>
+            <div>
+                <ol>
+                    <li>NASA Exoplanet Archive. <a href="https://exoplanetarchive.ipac.caltech.edu/exoplanetplots/" target="_blank" rel="noreferrer">Pre-generated Exoplanet Plots</a>. Accessed September 27, 2026.</li>
+                    <li>NASA Exoplanet Archive. <a href="https://doi.org/10.26133/NEA12" target="_blank" rel="noreferrer">Planetary Systems Table</a>. DOI: 10.26133/NEA12.</li>
+                    <li>NASA Exoplanet Archive. <a href="https://exoplanetarchive.ipac.caltech.edu/docs/TAP/usingTAP.html" target="_blank" rel="noreferrer">Table Access Protocol User Guide</a>.</li>
+                    <li>NASA/JPL Solar System Dynamics. <a href="https://ssd.jpl.nasa.gov/planets/phys_par.html" target="_blank" rel="noreferrer">Planetary Physical Parameters</a>.</li>
+                    <li>Munzner, Tamara. <em>Visualization Analysis and Design</em>. CRC Press, 2014.</li>
+                </ol>
+                <ul class="data-downloads">
+                    <li><a href="data/exoplanets_mass_period.csv" download>Download exoplanet CSV</a></li>
+                    <li><a href="data/solar_system_planets.csv" download>Download Solar System CSV</a></li>
+                    <li><a href="data/README.md">Read data dictionary and query</a></li>
+                    <li><a href="report.html">Open the report page</a></li>
+                    <li><a href="report.md">Download the report as Markdown</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <a class="back-link project-back-link" href="../index.html">
+            <span aria-hidden="true">←</span> Back to the course site
+        </a>
+    </main>
+
+    <footer>
+        <p>STATS 401 · Visualization Critique and Redesign</p>
+        <p>NASA Exoplanet Archive data</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="project.js?v=1"></script>
+</body>
+</html>

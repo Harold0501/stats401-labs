@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Report for the NASA exoplanet mass–period visualization critique and redesign.">
+    <title>Exoplanet Mass–Period Report · STATS 401</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
+            <span class="brand-mark">401</span>
+            <span>Data Acquisition<br>and Visualization</span>
+        </a>
+        <span class="course-tag">Individual Project</span>
+    </header>
+
+    <main class="standalone-report-page">
+        <header class="simple-report-header">
+            <p class="eyebrow">Visualization Critique and Redesign</p>
+            <h1>Project report.</h1>
+            <p class="lead">NASA Exoplanet Mass–Period Space · 674 words</p>
+            <nav class="project-tabs" aria-label="Individual project pages">
+                <a href="index.html">Visualization</a>
+                <a class="is-active" href="report.html" aria-current="page">Report</a>
+            </nav>
+        </header>
+
+        <article class="simple-report">
+            <section aria-labelledby="report-context">
+                <h2 id="report-context">Original visualization and context</h2>
+                <p>
+                    NASA’s “Planet Mass or Mass*sin(i) vs Orbital Period” scatterplot summarizes confirmed exoplanets with both quantities available. Horizontal position shows orbital period in days; vertical position shows best mass in Jupiter masses. Both axes are logarithmic. Color and shape identify discovery method, while eight outlined points locate the Solar System planets. The intended message is that known planets occupy an enormous and structured parameter space, and that detection methods populate different regions of it.
+                </p>
+                <p>
+                    The audience includes astronomers, students, science communicators, and curious members of the public. They should be able to locate clusters and outliers, compare discovery methods, judge orders of magnitude, and relate unfamiliar worlds to Earth, Jupiter, and their neighbors. The chart is therefore both a scientific overview and presentation material rather than a tool for estimating planet occurrence rates.
+                </p>
+            </section>
+
+            <section aria-labelledby="report-critique">
+                <h2 id="report-critique">Critique</h2>
+                <p>
+                    Two choices work especially well. First, position on aligned axes is an accurate channel for comparing quantitative values, and logarithmic scales make ranges from hours to millennia and sub-Earth to super-Jupiter masses visible together. Second, encoding discovery method and adding Solar System anchors gives the distribution scientific context: the dense short-period Transit region differs visibly from the Radial Velocity population, while familiar planets establish a useful frame of reference.
+                </p>
+                <p>
+                    Three problems limit those strengths. The largest is overplotting. More than 2,700 Transit and Radial Velocity planets use opaque marks, hiding local density and covering rarer methods. The oversized eleven-item legend then occupies the lower-right data region and requires repeated lookup between symbols and labels. Color and shape together distinguish many categories, but several tiny symbols remain difficult to decode and compare.
+                </p>
+                <p>
+                    The chart also asks non-specialists to interpret “Mass or Mass*sin(i)” without explaining that M sin(i) is a lower bound caused by unknown inclination. Abbreviated Solar System labels such as “Me” and “Ma” slow identification. Finally, the static image cannot identify a planet, expose uncertainty, isolate a method, or reveal how discoveries accumulated over time. These are task failures rather than merely stylistic objections: overlap obstructs comparison, technical ambiguity risks incorrect inference, and absent details prevent viewers from validating apparent outliers.
+                </p>
+            </section>
+
+            <section aria-labelledby="report-rationale">
+                <h2 id="report-rationale">Redesign rationale</h2>
+                <p>
+                    The redesign first uses small semi-transparent circles and moves the legend outside the plotting rectangle as a bank of direct filters. Counts reveal the severe category imbalance, and selecting methods removes occlusion rather than merely recoloring it. A colorblind-conscious palette, explicit selected states, text labels, and keyboard-operable controls reduce dependence on color alone.
+                </p>
+                <p>
+                    Second, details appear on demand. Hover, click, search, or keyboard navigation reveals the planet name, period, mass in Jupiter and Earth units, uncertainty, mass provenance, discovery method, year, and facility. Selecting a planet draws its available uncertainty intervals directly on the plot. The explanatory note defines log spacing and M sin(i), addressing the original’s most consequential technical ambiguity without placing thousands of labels on the chart.
+                </p>
+                <p>
+                    Third, Solar System planets occupy a dedicated foreground layer with full names and a visibility toggle. They remain unmistakable reference points but no longer compete with the method legend. A discovery-year slider keeps axes fixed while filtering the population, making change comparable across time. Search and mass-provenance controls support targeted lookup and honest comparison of different measurement types. Each interaction is tied to an intended task rather than added for novelty.
+                </p>
+            </section>
+
+            <section aria-labelledby="report-comparison">
+                <h2 id="report-comparison">Original vs. redesign</h2>
+                <p>
+                    The original remains faster as a single static overview and its varied marker shapes print well at large size. The redesign instead makes method comparison, planet lookup, uncertainty inspection, and Solar System comparison substantially easier. It also reveals that visible density reflects what instruments can detect, not the true frequency of planets.
+                </p>
+                <p>
+                    Important limitations remain. The dataset excludes confirmed planets missing either plotted measurement, combines measured masses with inclination-dependent estimates, and inherits strong discovery biases. Transparency improves overlap but does not provide a formal density estimate. Interaction also demands more attention than a static figure, and the live archive will change after this dated snapshot. The redesign exposes these constraints; it cannot remove them.
+                </p>
+            </section>
+
+            <section aria-labelledby="report-figures">
+                <h2 id="report-figures">Figures</h2>
+                <figure>
+                    <img src="assets/nasa_exoplanet_mass_period.png" width="5750" height="3500" alt="Original NASA mass–period scatterplot.">
+                    <figcaption>Figure 1. Original NASA Exoplanet Archive visualization, dated September 25, 2026.</figcaption>
+                </figure>
+                <figure>
+                    <img src="assets/exoplanet_redesign.png" width="1600" height="1400" alt="Redesigned interactive exoplanet mass–period visualization.">
+                    <figcaption>Figure 2. D3.js redesign using the September 27, 2026 data snapshot.</figcaption>
+                </figure>
+            </section>
+
+            <section aria-labelledby="report-references">
+                <h2 id="report-references">References</h2>
+                <ol>
+                    <li>NASA Exoplanet Archive. <a href="https://exoplanetarchive.ipac.caltech.edu/exoplanetplots/" target="_blank" rel="noreferrer">Pre-generated Exoplanet Plots</a>.</li>
+                    <li>NASA Exoplanet Archive. <a href="https://doi.org/10.26133/NEA12" target="_blank" rel="noreferrer">Planetary Systems Table</a>. DOI: 10.26133/NEA12.</li>
+                    <li>NASA Exoplanet Archive. <a href="https://exoplanetarchive.ipac.caltech.edu/docs/TAP/usingTAP.html" target="_blank" rel="noreferrer">Table Access Protocol User Guide</a>.</li>
+                    <li>NASA/JPL Solar System Dynamics. <a href="https://ssd.jpl.nasa.gov/planets/phys_par.html" target="_blank" rel="noreferrer">Planetary Physical Parameters</a>.</li>
+                    <li>Munzner, Tamara. <em>Visualization Analysis and Design</em>. CRC Press, 2014.</li>
+                </ol>
+                <p><a href="report.md">Download this report as Markdown</a>.</p>
+            </section>
+        </article>
+
+        <a class="back-link report-back-link" href="../index.html">
+            <span aria-hidden="true">←</span> Back to the course site
+        </a>
+    </main>
+
+    <footer>
+        <p>STATS 401 · Individual Project Report</p>
+        <p>NASA Exoplanet Archive data</p>
+    </footer>
+</body>
+</html>
