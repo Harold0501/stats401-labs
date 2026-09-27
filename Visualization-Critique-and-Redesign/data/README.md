@@ -1,14 +1,14 @@
-# Exoplanet mass–period data
+# Exoplanet mass-period data
 
-Retrieved on **2026-09-27** for the STATS 401 individual project. The committed files are a reproducible snapshot; NASA’s live archive changes as new planets and measurements are added.
+Retrieved on **2026-09-27** for the STATS 401 individual project. The committed files are a reproducible snapshot; NASA's live archive changes as new planets and measurements are added.
 
 ## Files
 
-- `exoplanets_mass_period.csv` — 2,819 confirmed planets from the NASA Exoplanet Archive Planetary Systems (`ps`) table. Every row uses the archive’s default parameter set and has both an orbital period and best-mass value.
-- `solar_system_planets.csv` — eight Solar System planets derived from JPL’s *Planetary Physical Parameters* table.
-- `jpl_planetary_physical_parameters.html` — the downloaded JPL source snapshot used for the Solar System conversion.
-- `download_data.ps1` — refreshes the NASA/JPL source files and rebuilds `solar_system_planets.csv`.
-- `../assets/nasa_exoplanet_mass_period.png` — local copy of NASA’s original visualization, whose printed date is 2026-09-25.
+- `exoplanets_mass_period.csv` - 2,819 confirmed planets from the NASA Exoplanet Archive Planetary Systems (`ps`) table. Every row uses the archive's default parameter set and has both an orbital period and best-mass value.
+- `solar_system_planets.csv` - eight Solar System planets derived from JPL's *Planetary Physical Parameters* table.
+- `jpl_planetary_physical_parameters.html` - the downloaded JPL source snapshot used for the Solar System conversion.
+- `download_data.ps1` - refreshes the NASA/JPL source files and rebuilds `solar_system_planets.csv`.
+- `../assets/nasa_exoplanet_mass_period.png` - local copy of NASA's original visualization, whose printed date is 2026-09-25.
 
 ## NASA Exoplanet Archive query
 
@@ -31,7 +31,7 @@ WHERE default_flag = 1
 ORDER BY pl_name
 ```
 
-The filter matches the archive’s description of its pre-generated plots: points are shown only when all parameters required by the plot have measured values. The original interactive chart uses `pl_orbper` for x, `pl_bmassj` for y, and `discoverymethod` for the categorical encoding.
+The filter matches the archive's description of its pre-generated plots: points are shown only when all parameters required by the plot have measured values. The original interactive chart uses `pl_orbper` for x, `pl_bmassj` for y, and `discoverymethod` for the categorical encoding.
 
 ## Field dictionary
 
@@ -55,11 +55,11 @@ The filter matches the archive’s description of its pre-generated plots: point
 
 Source: <https://ssd.jpl.nasa.gov/planets/phys_par.html>
 
-JPL reports mass in 10²⁴ kg and sidereal orbital period in years. The project converts values as follows:
+JPL reports mass in 10^24 kg and sidereal orbital period in years. The project converts values as follows:
 
 ```text
-orbital_period_days = sidereal_orbital_period_years × 365.25
-mass_jupiter = mass_1e24_kg ÷ 1898.125
+orbital_period_days = sidereal_orbital_period_years * 365.25
+mass_jupiter = mass_1e24_kg / 1898.125
 ```
 
 Only the eight planets are included, matching the original NASA plot. Pluto is not included because JPL classifies it as a dwarf planet.

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Report for the NASA exoplanet mass–period visualization critique and redesign.">
-    <title>Exoplanet Mass–Period Report · STATS 401</title>
+    <meta name="description" content="Report for the NASA exoplanet mass-period visualization critique and redesign.">
+    <title>Exoplanet Mass-Period Report · STATS 401</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -20,7 +20,7 @@
         <header class="simple-report-header">
             <p class="eyebrow">Visualization Critique and Redesign</p>
             <h1>Project report.</h1>
-            <p class="lead">NASA Exoplanet Mass–Period Space · 747 words</p>
+            <p class="lead">NASA Exoplanet Mass-Period Space · 747 words</p>
             <nav class="project-tabs" aria-label="Individual project pages">
                 <a href="index.html">Visualization</a>
                 <a class="is-active" href="report.html" aria-current="page">Report</a>
@@ -31,7 +31,7 @@
             <section aria-labelledby="report-context">
                 <h2 id="report-context">Original visualization and context</h2>
                 <p>
-                    NASA’s “Planet Mass or Mass*sin(i) vs Orbital Period” scatterplot summarizes confirmed exoplanets with both quantities available. Horizontal position shows orbital period in days; vertical position shows best mass in Jupiter masses. Both axes are logarithmic. Color and shape identify discovery method, while eight outlined points locate the Solar System planets. The intended message is that known planets occupy an enormous and structured parameter space, and that detection methods populate different regions of it.
+                    NASA's “Planet Mass or Mass*sin(i) vs Orbital Period” scatterplot summarizes confirmed exoplanets with both quantities available. Horizontal position shows orbital period in days; vertical position shows best mass in Jupiter masses. Both axes are logarithmic. Color and shape identify discovery method, while eight outlined points locate the Solar System planets. The intended message is that known planets occupy an enormous and structured parameter space, and that detection methods populate different regions of it.
                 </p>
                 <p>
                     The audience includes astronomers, students, science communicators, and curious members of the public. They should be able to locate clusters and outliers, compare discovery methods, judge orders of magnitude, and relate unfamiliar worlds to Earth, Jupiter, and their neighbors. The chart is therefore both a scientific overview and presentation material rather than a tool for estimating planet occurrence rates.
@@ -54,10 +54,10 @@
             <section aria-labelledby="report-rationale">
                 <h2 id="report-rationale">Redesign rationale</h2>
                 <p>
-                    The redesign first uses small semi-transparent circles and moves the legend outside the plotting rectangle as a bank of direct filters. Counts reveal the severe category imbalance, and selecting methods removes occlusion rather than merely recoloring it. However, opacity and filters still make a dense cluster difficult to characterize quantitatively. The redesign therefore introduces linked aggregation: users can brush any region of mass–period space and immediately see its exact population, discovery-method composition, and discoveries by year. Marks outside the selection recede while the selected population remains prominent. This converts an uncertain visual judgment—“this area looks dense”—into a quantitative comparison. A colorblind-conscious palette, explicit selected states, text labels, and keyboard-operable controls reduce dependence on color alone.
+                    The redesign first uses small semi-transparent circles and moves the legend outside the plotting rectangle as a bank of direct filters. Counts reveal the severe category imbalance, and selecting methods removes occlusion rather than merely recoloring it. However, opacity and filters still make a dense cluster difficult to characterize quantitatively. The redesign therefore introduces linked aggregation: users can brush any region of mass-period space and immediately see its exact population, discovery-method composition compared with all visible planets, and discoveries by year. Marks outside the selection recede while the selected population remains prominent. This converts an uncertain visual judgment—“this area looks dense”—into a quantitative comparison. A colorblind-conscious palette, explicit selected states, text labels, and keyboard-operable controls reduce dependence on color alone.
                 </p>
                 <p>
-                    Second, details appear on demand. Hover, click, search, or keyboard navigation reveals the planet name, period, mass in Jupiter and Earth units, uncertainty, mass provenance, discovery method, year, and facility. Selecting a planet draws its available uncertainty intervals directly on the plot. The explanatory note defines log spacing and M sin(i), addressing the original’s most consequential technical ambiguity without placing thousands of labels on the chart.
+                    Second, details appear on demand. Hover, click, search, or keyboard navigation reveals the planet name, period, mass in Jupiter and Earth units, uncertainty, mass provenance, discovery method, year, and facility. Selecting a planet draws its available uncertainty intervals directly on the plot. The explanatory note defines log spacing and M sin(i), addressing the original's most consequential technical ambiguity without placing thousands of labels on the chart.
                 </p>
                 <p>
                     Third, Solar System planets occupy a dedicated foreground layer with full names and a visibility toggle. They remain unmistakable reference points but no longer compete with the method legend. A discovery-year slider keeps axes fixed while filtering the population, making change comparable across time. Search and mass-provenance controls support targeted lookup and honest comparison of different measurement types. Each interaction is tied to an intended task rather than added for novelty.
@@ -77,11 +77,11 @@
             <section aria-labelledby="report-figures">
                 <h2 id="report-figures">Figures</h2>
                 <figure>
-                    <img src="assets/nasa_exoplanet_mass_period.png" width="5750" height="3500" alt="Original NASA mass–period scatterplot.">
+                    <img src="assets/nasa_exoplanet_mass_period.png" width="5750" height="3500" alt="Original NASA mass-period scatterplot.">
                     <figcaption>Figure 1. Original NASA Exoplanet Archive visualization, dated September 25, 2026.</figcaption>
                 </figure>
                 <figure>
-                    <img src="assets/exoplanet_redesign.png" width="1600" height="2200" alt="Redesigned interactive exoplanet mass–period visualization with a brushed population summary below the chart.">
+                    <img src="assets/exoplanet_redesign.png" width="1600" height="2600" alt="Redesigned interactive exoplanet mass-period visualization with a brushed population summary comparing the selection with all visible planets.">
                     <figcaption>Figure 2. D3.js redesign using the September 27, 2026 data snapshot.</figcaption>
                 </figure>
             </section>

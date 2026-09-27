@@ -1064,10 +1064,44 @@ footer p {
     font-variant-numeric: tabular-nums;
 }
 
+.population-method-comparison {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: baseline;
+    gap: 5px 14px;
+    color: var(--muted);
+    font-size: 0.59rem;
+    font-weight: 750;
+}
+
+.population-method-comparison b {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+}
+
+.population-method-comparison em {
+    margin-left: auto;
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+    font-weight: 900;
+}
+
+.population-method-comparison em.is-positive {
+    color: var(--teal);
+}
+
+.population-method-comparison em.is-negative {
+    color: var(--accent);
+}
+
+.population-method-comparison em.is-neutral {
+    color: var(--muted);
+}
+
 .population-method-row > i {
+    position: relative;
     height: 5px;
     grid-column: 1 / -1;
-    overflow: hidden;
     border-radius: 999px;
     background: rgba(96, 113, 110, 0.14);
 }
@@ -1078,6 +1112,25 @@ footer p {
     display: block;
     border-radius: inherit;
     background: var(--population-color);
+}
+
+.population-method-row > i > span {
+    position: absolute;
+    top: -3px;
+    left: var(--overall-position);
+    width: 2px;
+    height: 11px;
+    border-radius: 1px;
+    background: var(--ink);
+    box-shadow: 0 0 0 1px #f8f5ec;
+    transform: translateX(-50%);
+}
+
+.population-comparison-note {
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 0.58rem;
+    font-weight: 700;
 }
 
 .population-section-heading {

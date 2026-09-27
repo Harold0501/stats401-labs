@@ -499,27 +499,59 @@
 
         const periodExtent = d3.extent(planets, (planet) => planet.pl_orbper);
         const massExtent = d3.extent(planets, (planet) => planet.pl_bmassj);
-        const counts = Array.from(d3.rollup(planets, (values) => values.length, (planet) => planet.discoverymethod))
+        const selectedCounts = d3.rollup(planets, (values) => values.length, (planet) => planet.discoverymethod);
+        const visibleCounts = d3.rollup(visiblePlanets, (values) => values.length, (planet) => planet.discoverymethod);
+        const counts = Array.from(selectedCounts)
             .sort((a, b) => d3.descending(a[1], b[1]));
-        const rows = counts.slice(0, 4).map(([method, count]) => ({ method, count, color: methodColor(method) }));
+        const leadingMethods = new Set(counts.slice(0, 4).map(([method]) => method));
+        const rows = counts.slice(0, 4).map(([method, count]) => ({
+            method,
+            count,
+            visibleCount: visibleCounts.get(method) || 0,
+            color: methodColor(method)
+        }));
+        const otherMethods = Array.from(visibleCounts.keys()).filter((method) => !leadingMethods.has(method));
 
-        if (counts.length > 4) {
+        if (otherMethods.length) {
             rows.push({
                 method: "Other",
-                count: d3.sum(counts.slice(4), ([, count]) => count),
+                count: d3.sum(otherMethods, (method) => selectedCounts.get(method) || 0),
+                visibleCount: d3.sum(otherMethods, (method) => visibleCounts.get(method) || 0),
                 color: "#7f8d89"
             });
         }
 
-        const maxCount = d3.max(rows, (row) => row.count) || 1;
         const methodRows = rows.map((row) => {
-            const width = (row.count / maxCount) * 100;
-            const share = (row.count / planets.length) * 100;
+            const selectedShare = (row.count / planets.length) * 100;
+            const visibleShare = (row.visibleCount / visiblePlanets.length) * 100;
+            const difference = selectedShare - visibleShare;
+            const isNeutral = Math.abs(difference) <= 0.05;
+            const differenceLabel = isNeutral
+                ? "0.0 pp"
+                : `${difference > 0 ? "+" : ""}${d3.format(".1f")(difference)} pp`;
+            const differenceClass = difference > 0.05
+                ? "is-positive"
+                : difference < -0.05
+                    ? "is-negative"
+                    : "is-neutral";
+            const comparisonPhrase = difference > 0.05
+                ? `${d3.format(".1f")(difference)} percentage points higher`
+                : difference < -0.05
+                    ? `${d3.format(".1f")(Math.abs(difference))} percentage points lower`
+                    : "the same share";
             return `
-                <div class="population-method-row" aria-label="${escapeHtml(row.method)}: ${row.count} planets, ${d3.format(".1f")(share)} percent">
+                <div class="population-method-row" aria-label="${escapeHtml(row.method)}: ${row.count} selected planets, ${d3.format(".1f")(selectedShare)} percent of the selection versus ${d3.format(".1f")(visibleShare)} percent of all visible planets, ${comparisonPhrase}">
                     <span>${escapeHtml(row.method)}</span>
                     <strong>${row.count.toLocaleString()}</strong>
-                    <i><b style="--population-width:${width}%;--population-color:${row.color}"></b></i>
+                    <div class="population-method-comparison">
+                        <span>Selected <b>${d3.format(".1f")(selectedShare)}%</b></span>
+                        <span>All visible <b>${d3.format(".1f")(visibleShare)}%</b></span>
+                        <em class="${differenceClass}">${differenceLabel}</em>
+                    </div>
+                    <i aria-hidden="true">
+                        <b style="--population-width:${selectedShare}%;--population-color:${row.color}"></b>
+                        <span style="--overall-position:${visibleShare}%"></span>
+                    </i>
                 </div>`;
         }).join("");
 
@@ -531,8 +563,12 @@
                 <div><span>Mass</span><strong>${formatJupiterMass(massExtent[0])}<br>to ${formatJupiterMass(massExtent[1])}</strong></div>
             </div>
             <section class="population-methods" aria-labelledby="population-methods-heading">
-                <h4 id="population-methods-heading">Discovery method</h4>
+                <div class="population-section-heading">
+                    <h4 id="population-methods-heading">Discovery method</h4>
+                    <span>Selected vs all visible</span>
+                </div>
                 ${methodRows}
+                <p class="population-comparison-note">Filled bar: selected share · marker: all-visible share · Δ shown in percentage points</p>
             </section>
             <section class="population-years" aria-labelledby="population-years-heading">
                 <div class="population-section-heading">

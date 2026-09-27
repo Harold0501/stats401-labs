@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A visualization critique and D3.js redesign of NASA's exoplanet mass–period plot.">
-    <title>Exoplanet Mass–Period Redesign · STATS 401</title>
+    <meta name="description" content="A visualization critique and D3.js redesign of NASA's exoplanet mass-period plot.">
+    <title>Exoplanet Mass-Period Redesign · STATS 401</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -19,9 +19,9 @@
     <main>
         <section class="lab-intro project-intro">
             <p class="eyebrow">Visualization Critique and Redesign</p>
-            <h1>Exoplanets in <span>mass–period space.</span></h1>
+            <h1>Exoplanets in <span>mass-period space.</span></h1>
             <p class="lead">
-                NASA’s original view reveals the extraordinary range of known worlds.
+                NASA's original view reveals the extraordinary range of known worlds.
                 This redesign makes its discovery patterns, measurement differences,
                 and Solar System reference easier to inspect.
             </p>
@@ -36,7 +36,6 @@
                 <div>
                     <p class="eyebrow">Part I · Original visualization</p>
                     <h2 id="original-heading">Planet Mass vs. Orbital Period</h2>
-                    <p>Confirmed planets are positioned on logarithmic axes and grouped by discovery method.</p>
                 </div>
                 <a class="source-link" href="https://exoplanetarchive.ipac.caltech.edu/exoplanetplots/" target="_blank" rel="noreferrer">NASA source ↗</a>
             </div>
@@ -57,12 +56,7 @@
                     <h2 id="redesign-heading">Explore the worlds we can measure</h2>
                     <p>Inspect individual planets or brush a region to quantify its discovery-method mix and discovery history.</p>
                 </div>
-                <span class="chart-note">D3.js · log–log</span>
-            </div>
-
-            <div class="project-chart-note" role="note">
-                <strong>How to read it:</strong> farther right means a longer year; higher means more massive.
-                Equal spacing represents a tenfold change. “M sin(i)” is a minimum mass inferred when orbital inclination is unknown.
+                <span class="chart-note">D3.js · log-log</span>
             </div>
 
             <form class="exoplanet-controls" id="exoplanet-controls">
