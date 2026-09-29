@@ -3667,6 +3667,326 @@ footer p {
     border: 0;
 }
 
+/* Lab 9 */
+.lab9-intro {
+    padding-bottom: 86px;
+    border-bottom: 1px solid var(--line);
+}
+
+.lab9-intro h1 span {
+    color: var(--accent);
+    font-style: italic;
+}
+
+.lab9-data,
+.lab9-comparison {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(38px, 8vw, 100px);
+    padding: 92px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.lab9-data h2,
+.lab9-comparison h2 {
+    margin: 0;
+    font-size: clamp(2.5rem, 5vw, 4.6rem);
+}
+
+.lab9-data-copy,
+.lab9-comparison-copy {
+    color: var(--muted);
+    font-size: 0.96rem;
+}
+
+.lab9-data-copy p:last-of-type,
+.lab9-comparison-copy p:last-child {
+    margin-bottom: 0;
+}
+
+.lab9-data-copy strong,
+.lab9-comparison-copy strong {
+    color: var(--ink);
+}
+
+.lab9-source-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 22px;
+    margin-top: 28px;
+}
+
+.lab9-source-links a {
+    color: var(--teal);
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-underline-offset: 4px;
+}
+
+.lab9-map-section {
+    padding: 92px 0 84px;
+    border-bottom: 1px solid var(--line);
+}
+
+.lab9-chart-header {
+    align-items: flex-end;
+    margin-bottom: 26px;
+}
+
+.lab9-chart-header > div {
+    max-width: 800px;
+}
+
+.lab9-chart-header .eyebrow {
+    margin-bottom: 10px;
+}
+
+.lab9-chart-header h2 {
+    margin-bottom: 14px;
+}
+
+.lab9-chart-header p:last-child {
+    max-width: 720px;
+    font-size: 0.92rem;
+}
+
+.lab9-legend-wrap {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.7fr) minmax(320px, 1.4fr) auto;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 14px;
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+}
+
+.lab9-legend-wrap > div:first-child {
+    display: grid;
+}
+
+.lab9-legend-wrap strong,
+.lab9-area-key > strong {
+    color: var(--ink);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.lab9-legend-wrap > div:first-child span {
+    color: var(--muted);
+    font-size: 0.7rem;
+}
+
+.lab9-color-legend svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.lab9-legend-axis {
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 9px;
+}
+
+.lab9-legend-axis .domain {
+    stroke: var(--line);
+}
+
+.lab9-missing-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.lab9-missing-key i {
+    width: 18px;
+    height: 12px;
+    border: 1px solid #c6c3ba;
+    background: #dfddd4;
+}
+
+.lab9-map {
+    min-height: 560px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at 50% 42%, rgba(31, 109, 102, 0.045), transparent 28rem),
+        #f8f5ec;
+    box-shadow: var(--shadow);
+}
+
+.lab9-map svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+#choropleth-map svg {
+    cursor: grab;
+}
+
+#choropleth-map svg:active {
+    cursor: grabbing;
+}
+
+.lab9-sphere {
+    fill: #f8f5ec;
+    stroke: var(--line);
+    stroke-width: 1px;
+}
+
+.lab9-graticule,
+.lab9-cartogram-graticule {
+    fill: none;
+    stroke: rgba(96, 113, 110, 0.18);
+    stroke-width: 0.65px;
+    pointer-events: none;
+}
+
+.lab9-country {
+    stroke: var(--card);
+    stroke-linejoin: round;
+    stroke-width: 0.75px;
+    transition: opacity 150ms ease, filter 150ms ease;
+    outline: none;
+}
+
+.lab9-country[tabindex="0"] {
+    cursor: pointer;
+}
+
+.lab9-country:focus-visible {
+    stroke: var(--ink);
+    stroke-width: 2px;
+}
+
+.lab9-country.is-linked-muted {
+    opacity: 0.25;
+}
+
+.lab9-country.is-linked-active {
+    filter: drop-shadow(0 0 4px rgba(229, 87, 50, 0.65));
+    opacity: 1;
+    stroke: var(--accent);
+    stroke-width: 3px !important;
+}
+
+.interaction-note {
+    margin: 12px 2px 0;
+    color: var(--muted);
+    font-size: 0.72rem;
+}
+
+.lab9-cartogram-section {
+    background: linear-gradient(90deg, transparent, rgba(31, 109, 102, 0.025), transparent);
+}
+
+.lab9-area-key {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px 18px;
+    min-height: 58px;
+    margin-bottom: 14px;
+    padding: 10px 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--muted);
+    background: var(--card);
+    font-size: 0.7rem;
+    font-weight: 750;
+}
+
+.lab9-area-key span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.lab9-cartogram-data-key,
+.lab9-cartogram-missing-key {
+    width: 18px;
+    height: 12px;
+    display: inline-block;
+    border: 1px solid rgba(16, 42, 42, 0.18);
+}
+
+.lab9-cartogram-data-key {
+    background: linear-gradient(90deg, #cfe4dc, #123f43);
+}
+
+.lab9-cartogram-missing-key {
+    background: #dfddd4;
+}
+
+.lab9-cartogram .cartogram {
+    position: relative;
+}
+
+.lab9-cartogram .float-tooltip {
+    display: none;
+}
+
+.lab9-cartogram-country {
+    outline: none;
+    stroke: var(--card);
+    stroke-linejoin: round;
+    stroke-width: 0.8px;
+    transition: opacity 150ms ease, filter 150ms ease;
+}
+
+.lab9-cartogram-country.has-gdp {
+    cursor: pointer;
+}
+
+.lab9-cartogram-country:focus-visible {
+    stroke: var(--ink);
+    stroke-width: 3px;
+}
+
+.lab9-cartogram-country.is-linked-muted {
+    opacity: 0.13;
+}
+
+.lab9-cartogram-country.is-linked-active {
+    filter: drop-shadow(0 0 6px rgba(229, 87, 50, 0.7));
+    opacity: 1;
+    stroke: var(--accent);
+    stroke-width: 4px;
+}
+
+.lab9-tooltip small {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 0.68rem;
+}
+
+#clear-country:disabled {
+    cursor: default;
+    opacity: 0.45;
+}
+
+.lab9-comparison {
+    border-bottom: 0;
+}
+
+.lab9-comparison-copy p {
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.lab9-back-link {
+    margin-bottom: 72px;
+}
+
 /* Placeholder pages */
 .placeholder {
     min-height: calc(100vh - 220px);
@@ -3683,6 +4003,14 @@ footer p {
 }
 
 @media (max-width: 980px) {
+    .lab9-legend-wrap {
+        grid-template-columns: minmax(160px, 0.6fr) minmax(320px, 1.4fr);
+    }
+
+    .lab9-missing-key {
+        grid-column: 1 / -1;
+    }
+
     .semantic-controls {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -3776,6 +4104,44 @@ footer p {
 
     .lab8-chart-header {
         align-items: stretch;
+    }
+
+    .lab9-data,
+    .lab9-comparison {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding: 68px 0;
+    }
+
+    .lab9-chart-header {
+        align-items: stretch;
+    }
+
+    .lab9-legend-wrap {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .lab9-missing-key {
+        grid-column: auto;
+    }
+
+    .lab9-area-key {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .lab9-area-key > strong {
+        flex-basis: 100%;
+    }
+
+    .lab9-map {
+        min-height: 430px;
+        overflow-x: auto;
+    }
+
+    .lab9-map svg {
+        min-width: 760px;
     }
 
     .overview-grid {

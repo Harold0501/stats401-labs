@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 9 · STATS 401</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta name="description" content="Two coordinated D3 views compare a 2025 GDP choropleth with a continuous area cartogram.">
+    <title>Lab 9 · World GDP, Reshaped</title>
+    <link rel="stylesheet" href="../css/style.css?v=2026-09-29-contiguous-cartogram">
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="../index.html">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
             <span class="brand-mark">401</span>
             <span>Data Acquisition<br>and Visualization</span>
         </a>
@@ -16,14 +17,130 @@
     </header>
 
     <main>
-        <section class="placeholder">
-            <p class="eyebrow">Lab 9</p>
-            <h1>Coming soon.</h1>
-            <p class="lead">This lab will be added as the course progresses.</p>
-            <a class="back-link" href="../index.html">
-                <span aria-hidden="true">←</span> Back to all labs
-            </a>
+        <section class="lab-intro lab9-intro">
+            <p class="eyebrow">Lab 9 · Geospatial Visualization</p>
+            <h1>World GDP Visualization</h1>
         </section>
+
+        <section class="lab9-data" aria-labelledby="dataset-heading">
+            <div>
+                <p class="eyebrow">01 · Dataset</p>
+                <h2 id="dataset-heading">Dataset Description</h2>
+            </div>
+            <div class="lab9-data-copy">
+                <p>
+                    The provided dataset reports 2025 nominal GDP in billions of current U.S. dollars
+                    for the 50 largest economies. Values are based on the IMF World Economic Outlook,
+                    October 2025; observations may include staff estimates and can be revised.
+                </p>
+                <p>
+                    GDP rows are joined to world boundaries by ISO-3 identifier. Countries outside the
+                    provided top-50 dataset are shown in neutral gray as no data.
+                </p>
+                <div class="lab9-source-links">
+                    <a href="../data/lab9_gdp_2025_top50.csv">Download GDP data</a>
+                    <a href="https://github.com/datasets/geo-countries">GeoJSON source</a>
+                    <a href="https://github.com/vasturiano/cartogram-chart">Cartogram algorithm</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="lab9-map-section" aria-labelledby="choropleth-heading">
+            <div class="chart-header lab9-chart-header">
+                <div>
+                    <p class="eyebrow">02 · Choropleth</p>
+                    <h2 id="choropleth-heading">2025 GDP Choropleth</h2>
+                </div>
+                <button id="reset-choropleth" class="network-reset" type="button">Reset view</button>
+            </div>
+
+            <div class="lab9-legend-wrap" aria-label="Choropleth legend">
+                <div>
+                    <strong>GDP (billion USD)</strong>
+                    <span>Logarithmic color scale</span>
+                </div>
+                <div id="gdp-legend" class="lab9-color-legend"></div>
+                <div class="lab9-missing-key"><i></i> Not in top 50</div>
+            </div>
+
+            <div id="choropleth-map" class="lab9-map" aria-busy="true">
+                <p class="loading">Joining GDP to world boundaries…</p>
+            </div>
+            <p class="interaction-note">
+                Scroll or pinch to zoom; drag to pan. Hover, focus, or click an economy to highlight it in both views.
+            </p>
+        </section>
+
+        <section class="lab9-map-section lab9-cartogram-section" aria-labelledby="cartogram-heading">
+            <div class="chart-header lab9-chart-header">
+                <div>
+                    <p class="eyebrow">03 · Continuous cartogram</p>
+                    <h2 id="cartogram-heading">2025 GDP Cartogram</h2>
+                </div>
+                <button id="clear-country" class="network-reset" type="button">Clear selection</button>
+            </div>
+
+            <div class="lab9-area-key" aria-label="Cartogram area legend">
+                <strong>Area (GDP in billion USD)</strong>
+                <span><i class="lab9-cartogram-data-key"></i>Top-50 GDP</span>
+                <span><i class="lab9-cartogram-missing-key"></i>No-data countries</span>
+            </div>
+
+            <div id="cartogram-map" class="lab9-map lab9-cartogram" aria-busy="true">
+                <p class="loading">Reshaping the world by economic size…</p>
+            </div>
+            <p class="interaction-note">
+                Colored country area is proportional to GDP. Gray countries have no value in the provided dataset;
+                their minimum structural layout weight preserves shared boundaries and encodes neither zero nor measured GDP.
+            </p>
+        </section>
+
+        <section class="lab9-comparison" aria-labelledby="comparison-heading">
+            <div>
+                <p class="eyebrow">04 · Design & comparison</p>
+                <h2 id="comparison-heading">Design and Comparison</h2>
+            </div>
+            <div class="lab9-comparison-copy">
+                <p>
+                    In the choropleth, the United States and China are the darkest countries, but their
+                    existing land areas still dominate shape perception. Canada, Russia, and Australia
+                    remain physically prominent even when their GDP color is moderate. Europe appears as
+                    a dense cluster of dark and mid-tone countries. The choropleth preserves
+                    borders, coastline, adjacency, direction, and recognizable location, so it best supports
+                    questions about regional patterns and where high-GDP countries cluster. 
+                </p>
+                <p>
+                    In the cartogram, the United States and China become overwhelmingly large, while Germany,
+                    Japan, India, and the United Kingdom form a visible second tier. Large-land, lower-output
+                    countries such as Russia, Canada, and Australia shrink sharply. Compact economies such as
+                    Singapore, the Netherlands, and Switzerland gain presence. The cartogram
+                    distorts shape, distance, adjacency, and exact position, but its proportional areas better
+                    support magnitude comparison, ranking, and assessment of each economy's share of the top-50
+                    total. 
+                </p>
+                <p>
+                    Moving from color to area changes GDP from an attribute painted onto geography into
+                    the organizing geometry itself. Economic scale becomes immediate, while the familiar map
+                    becomes harder to read. Linked highlighting restores correspondence without erasing that
+                    productive trade-off.
+                </p>
+            </div>
+        </section>
+
+        <a class="back-link lab9-back-link" href="../index.html">
+            <span aria-hidden="true">←</span> Back to all labs
+        </a>
     </main>
+
+    <div id="lab9-tooltip" class="tooltip lab9-tooltip" role="tooltip" aria-hidden="true"></div>
+
+    <footer>
+        <p>STATS 401 · Data Acquisition and Visualization</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cartogram-chart@1.4.4/dist/cartogram-chart.min.js"></script>
+    <script src="lab9.js?v=2026-09-29-contiguous-cartogram"></script>
 </body>
 </html>
