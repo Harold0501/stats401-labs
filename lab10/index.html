@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 10 · STATS 401</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta name="description" content="A voice-controlled extension of the Lab 9 world GDP choropleth.">
+    <title>Lab 10 · Speak to the Map</title>
+    <link rel="stylesheet" href="../css/style.css?v=2026-10-13-lab10">
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="../index.html">
+        <a class="brand" href="../index.html" aria-label="STATS 401 home">
             <span class="brand-mark">401</span>
             <span>Data Acquisition<br>and Visualization</span>
         </a>
@@ -16,14 +17,159 @@
     </header>
 
     <main>
-        <section class="placeholder">
-            <p class="eyebrow">Lab 10</p>
-            <h1>Coming soon.</h1>
-            <p class="lead">This lab will be added as the course progresses.</p>
-            <a class="back-link" href="../index.html">
-                <span aria-hidden="true">←</span> Back to all labs
-            </a>
+        <section class="lab-intro lab10-intro">
+            <p class="eyebrow">Lab 10 · Novel Interaction</p>
+            <h1>Speak to <span>the map.</span></h1>
+            <p class="lab10-lead">
+                A voice-controlled extension of Lab 9's 2025 GDP choropleth and cartogram. Filter the
+                top 50 economies by region, highlight a country, or reset both views with one command.
+            </p>
         </section>
+
+        <section class="lab10-workspace" aria-labelledby="gdp-map-heading">
+            <div class="lab10-section-heading lab10-map-heading">
+                <div>
+                    <h2 id="gdp-map-heading">Voice Interaction</h2>
+                </div>
+                <div class="lab10-view-status" aria-live="polite">
+                    <span>Current view</span>
+                    <strong id="current-view">All top-50 economies</strong>
+                </div>
+            </div>
+
+            <div class="lab10-command-strip">
+                <div class="lab10-listen-control">
+                    <button id="voice-button" class="voice-button voice-button--compact" type="button" aria-label="Start voice control">
+                        <span aria-hidden="true">●</span>
+                        <b>Listen</b>
+                    </button>
+                    <div>
+                        <div class="voice-console-topline">
+                            <span class="voice-indicator" id="voice-indicator" aria-hidden="true"></span>
+                            <span id="voice-state-label">Microphone off</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="voice-feedback" class="voice-feedback voice-feedback--compact" data-state="idle" aria-live="polite" aria-atomic="true">
+                    <div>
+                        <span>Heard</span>
+                        <strong id="heard-command">Waiting for a command…</strong>
+                    </div>
+                    <div>
+                        <span>Action</span>
+                        <strong id="action-feedback">No action yet</strong>
+                    </div>
+                </div>
+
+                <div class="command-examples" aria-label="Example voice commands">
+                    <span>Try or click:</span>
+                    <button class="command-example" type="button" data-command="show asia">“Show Asia”</button>
+                    <button class="command-example" type="button" data-command="highlight japan">“Highlight Japan”</button>
+                    <button class="command-example" type="button" data-command="reset">“Reset”</button>
+                </div>
+            </div>
+
+            <div class="lab10-fallback" aria-labelledby="fallback-heading">
+                <div class="fallback-label">
+                    <strong id="fallback-heading">Mouse &amp; keyboard fallback</strong>
+                </div>
+                <label>
+                    Region
+                    <select id="region-select">
+                        <option value="All">All regions</option>
+                        <option value="Asia">Asia</option>
+                        <option value="Europe">Europe</option>
+                        <option value="Americas">Americas</option>
+                        <option value="Africa">Africa</option>
+                        <option value="Oceania">Oceania</option>
+                    </select>
+                </label>
+                <label>
+                    Country
+                    <select id="country-select">
+                        <option value="">Choose a country</option>
+                    </select>
+                </label>
+                <button id="highlight-country" class="lab10-secondary-button" type="button">Highlight</button>
+                <button id="reset-map" class="network-reset" type="button">Reset</button>
+            </div>
+
+            <div class="lab10-legend-wrap" aria-label="GDP legend">
+                <div>
+                    <strong>GDP (billion USD)</strong>
+                </div>
+                <div id="lab10-gdp-legend" class="lab10-color-legend"></div>
+                <div class="lab10-missing-key"><i></i> Not in top 50</div>
+            </div>
+
+            <div class="lab10-map-grid">
+                <figure class="lab10-view-card">
+                    <figcaption>
+                        <div>
+                            <strong>GDP choropleth</strong>
+                        </div>
+                    </figcaption>
+                    <div id="voice-map" class="lab10-map" aria-busy="true">
+                        <p class="loading">Loading the GDP map…</p>
+                    </div>
+                </figure>
+
+                <figure class="lab10-view-card">
+                    <figcaption>
+                        <div>
+                            <strong>GDP cartogram</strong>
+                        </div>
+                    </figcaption>
+                    <div id="voice-cartogram" class="lab10-map lab10-cartogram" aria-busy="true">
+                        <p class="loading">Reshaping the world…</p>
+                    </div>
+                </figure>
+            </div>
+
+            <aside id="country-result" class="country-result" aria-live="polite">
+                <span class="country-result-rank">Selection</span>
+                <div>
+                    <strong id="result-country">No country selected</strong>
+                    <span id="result-gdp">Use voice, the fallback controls, or the map.</span>
+                </div>
+            </aside>
+        </section>
+
+        <section class="lab10-reflection" aria-labelledby="reflection-heading">
+            <div>
+                <h2 id="reflection-heading">Design Reflection</h2>
+            </div>
+            <div>
+                <p>
+                    I chose Lab 9's world GDP choropleth and cartogram to extend with browser-based voice control. 
+                    Users can say “Show Asia,” “Highlight Japan,” or “Reset” to filter the top-50 economies, select a
+                    country, and restore the overview, supporting a rapid country lookup with user's hands free. 
+                    Voice is appropriate for this task because each existing command has a corresponding short phrase, 
+                    and does not require precise pointing on a dense world map. 
+
+                    A key limitation is that the system only recognizes a predefined set of commands, so repeated, modified, or unsupported utterances may fail to trigger the intended action.
+                    In testing, the voice command can be misheard because of accents, background noise, or microphone 
+                    quality, since the speech recognition relies on an external browser service.
+                </p>
+            </div>
+        </section>
+
+        <a class="back-link lab10-back-link" href="../index.html">
+            <span aria-hidden="true">←</span> Back to all labs
+        </a>
     </main>
+
+    <div id="lab10-tooltip" class="tooltip lab10-tooltip" role="tooltip" aria-hidden="true"></div>
+
+    <footer>
+        <p>STATS 401 · Data Acquisition and Visualization</p>
+        <p>Lab 10 · Novel Interaction</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cartogram-chart@1.4.4/dist/cartogram-chart.min.js"></script>
+    <script src="lab10.js?v=2026-10-13-lab10"></script>
 </body>
 </html>
